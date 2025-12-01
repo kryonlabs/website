@@ -1,0 +1,31 @@
+[project]
+name = "kryon-website"
+version = "1.0.0"
+author = "Kryon Labs"
+description = "Official Kryon website built with Kryon"
+
+[build]
+target = "web"
+output_dir = "dist"
+entry = "index.js"
+frontend = "js"
+
+[build.optimization]
+enabled = true
+minify_css = true
+minify_js = true
+
+[web]
+generate_separate_files = true
+include_js_runtime = false
+minify_css = true
+minify_js = true
+
+[dev]
+hot_reload = true
+port = 3000
+watch_paths = ["index.js", "src/**/*.js"]
+
+[metadata]
+created = "2025-11-30"
+kryon_version = "1.2.0"
