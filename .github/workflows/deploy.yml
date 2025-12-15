@@ -14,6 +14,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup TSX parser dependencies
+        run: |
+          mkdir -p ~/.cache/kryon/scripts
+          cd ~/.cache/kryon/scripts
+          echo '{"dependencies":{"@babel/core":"^7.28.5","@babel/parser":"^7.28.5","@babel/types":"^7.28.5"}}' > package.json
+          bun install
+
       - name: Download Kryon CLI (web variant)
         run: |
           curl -fsSL \

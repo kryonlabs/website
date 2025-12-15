@@ -69,7 +69,7 @@ function Hero() {
           marginBottom={spacing.lg}
         />
         <Text
-          text="Kryon is a declarative UI framework that compiles your apps into an ultra-compact binary format for unparalleled performance on desktop, mobile, web, and embedded systems."
+          text="Kryon is a universal UI framework with an intermediate representation (IR) layer. Write once in .kry, Nim, or TSX - compile to native desktop, terminal, or web targets."
           fontSize={20}
           color={colors.secondaryText}
           marginBottom={spacing.xxxl}
@@ -154,25 +154,25 @@ function Features() {
         <Row gap={spacing.xxl}>
           <FeatureCard
             emoji="🌍"
-            title="True Universality"
-            description="Go beyond mobile and web. Kryon's compiled binary format runs natively on desktop (Win, macOS, Linux), mobile (iOS, Android), web (WASM), and even low-power embedded devices."
+            title="Multiple Backends"
+            description="Target SDL3 desktop (Windows, macOS, Linux), terminal TUI, or static web (HTML+CSS). Same IR, different renderers - your app adapts to each platform natively."
           />
           <FeatureCard
             emoji="⚡"
-            title="Extreme Performance"
-            description="The KRB binary format achieves 65-75% size reduction over source. With optimized data structures and a lightweight runtime, your apps load instantly and run smoothly on any hardware."
+            title="Compact IR Format"
+            description="The .kir JSON format is human-readable for debugging. The .kirb binary format is optimized for production - smaller files, faster parsing, instant loading."
           />
         </Row>
         <Row gap={spacing.xxl} marginTop={spacing.xxl}>
           <FeatureCard
             emoji="🧩"
-            title="Declarative & Powerful"
-            description="Write clean, maintainable UI with the KRY language. Leverage a powerful component system, scoped variables, style inheritance, and pseudo-selectors to build complex interfaces with ease."
+            title="Multiple Languages"
+            description="Write UI in .kry (simple declarative), Nim DSL (type-safe reactive), or TSX (familiar React-like syntax). All compile to the same universal IR format."
           />
           <FeatureCard
             emoji="🚀"
-            title="Extensible with Scripts"
-            description="Add dynamic behavior and complex logic to your applications. Kryon's runtime seamlessly integrates with sandboxed script engines like Lua and JavaScript, providing a safe and powerful API."
+            title="Plugin System"
+            description="Extend Kryon with plugins for Markdown rendering, custom components, and more. Plugins integrate seamlessly with the IR layer and all backends."
           />
         </Row>
       </Column>
@@ -240,22 +240,22 @@ function Workflow() {
           <WorkflowStep
             emoji="📝"
             stepNumber={1}
-            title="Write KRY"
-            description="Define your UI in the simple, declarative KRY language."
+            title="Write Source"
+            description="Define your UI in .kry, Nim DSL, or TSX - whichever fits your workflow."
           />
           <Text text="→" fontSize={48} color={colors.secondaryText} />
           <WorkflowStep
             emoji="⚙️"
             stepNumber={2}
-            title="Compile to KRB"
-            description="The kryc compiler optimizes, validates, and transforms your source into a compact binary."
+            title="Compile to IR"
+            description="The kryon CLI compiles your source to .kir (JSON) or .kirb (binary) intermediate format."
           />
           <Text text="→" fontSize={48} color={colors.secondaryText} />
           <WorkflowStep
             emoji="📱"
             stepNumber={3}
-            title="Run Natively"
-            description="The cross-platform runtime loads the KRB file and renders a native, high-performance UI."
+            title="Render Anywhere"
+            description="Target desktop (SDL3), terminal, or web. Same IR, native rendering on each platform."
           />
         </Row>
       </Column>
