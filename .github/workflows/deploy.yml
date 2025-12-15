@@ -1,0 +1,51 @@
+name: Build and Deploy to Netlify
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Kryon CLI (web variant)
+        run: |
+          curl -fsSL \
+            https://github.com/kryonlabs/kryon/releases/download/latest/kryon-linux-x86_64-web \
+            -o /tmp/kryon
+          chmod +x /tmp/kryon
+          sudo mv /tmp/kryon /usr/local/bin/kryon
+
+      - name: Verify Kryon installation
+        run: kryon --version
+
+      - name: Build website
+        run: kryon build --targets=web
+
+      - name: Copy static assets to build directory
+        run: |
+          cp -v favicon.ico build/ 2>/dev/null || true
+          cp -v apple-touch-icon.png build/ 2>/dev/null || true
+          cp -v icon-*.png build/ 2>/dev/null || true
+
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v3
+        with:
+          publish-dir: './build'
+          production-branch: master
+          production-deploy: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions - ${{ github.sha }}"
+          enable-pull-request-comment: true
+          enable-commit-comment: false
+          overwrites-pull-request-comment: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 5

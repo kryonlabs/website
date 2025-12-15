@@ -84,6 +84,20 @@ declare module '@kryon/react' {
     onChange?: (checked: boolean) => void;
   }
 
+  // Link component props
+  interface LinkProps extends StyleProps {
+    href: string;
+    text: string;
+    target?: '_blank' | '_self' | '_parent' | '_top';
+  }
+
+  // Markdown component props
+  interface MarkdownProps extends StyleProps {
+    source?: string;           // Inline markdown content
+    file?: string;             // Path to markdown file (relative to project root)
+    theme?: 'light' | 'dark';
+  }
+
   // Component declarations
   export function Container(props: ContainerProps): JSX.Element;
   export function Row(props: RowProps): JSX.Element;
@@ -92,6 +106,8 @@ declare module '@kryon/react' {
   export function Button(props: ButtonProps): JSX.Element;
   export function Input(props: InputProps): JSX.Element;
   export function Checkbox(props: CheckboxProps): JSX.Element;
+  export function Link(props: LinkProps): JSX.Element;
+  export function Markdown(props: MarkdownProps): JSX.Element;
 
   // Hooks
   export function useState<T>(initialValue: T): [T, (value: T | ((prev: T) => T)) => void];

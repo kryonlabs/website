@@ -6,9 +6,16 @@ description = "Official Kryon website built with Kryon"
 
 [build]
 targets = ["web"]
-output_dir = "dist"
-entry = "index.tsx"
+output_dir = "build"
 frontend = "tsx"
+
+[[build.pages]]
+file = "index.tsx"
+path = "/"
+
+[[build.pages]]
+file = "docs.tsx"
+path = "/docs"
 
 [build.optimization]
 enabled = true
@@ -24,7 +31,7 @@ minify_js = true
 [dev]
 hot_reload = true
 port = 3000
-watch_paths = ["index.tsx", "src/**/*.tsx"]
+watch_paths = ["index.tsx", "docs.tsx", "src/**/*.tsx"]
 
 [metadata]
 created = "2025-11-30"

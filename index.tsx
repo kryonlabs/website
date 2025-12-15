@@ -3,7 +3,7 @@
  * Built with Kryon TSX bindings
  */
 
-import { kryonApp, Column, Row, Text, Button, Container } from '@kryon/react';
+import { kryonApp, Column, Row, Text, Button, Link, Container } from '@kryon/react';
 
 // Design System - Colors & Spacing
 const colors = {
@@ -46,18 +46,9 @@ function Header() {
 
       {/* Navigation */}
       <Row gap={spacing.xl} alignItems="center">
-        <Text text="Features" fontSize={16} color={colors.secondaryText} />
-        <Text text="Docs" fontSize={16} color={colors.secondaryText} />
-        <Text text="GitHub" fontSize={16} color={colors.secondaryText} />
-        <Button
-          text="View Documentation"
-          background={colors.accent}
-          color={colors.white}
-          padding="10px 20px"
-          borderRadius={6}
-          fontSize={14}
-          fontWeight="600"
-        />
+        <Link href="#features" text="Features" fontSize={16} color={colors.secondaryText} />
+        <Link href="/docs" text="Documentation" fontSize={16} color={colors.secondaryText} />
+        <Link href="https://github.com/kryonlabs" text="GitHub" fontSize={16} color={colors.secondaryText} target="_blank" />
       </Row>
     </Row>
   );
@@ -84,7 +75,8 @@ function Hero() {
         marginBottom={spacing.xxl}
       />
       <Row gap={spacing.lg}>
-        <Button
+        <Link
+          href="/docs"
           text="Get Started"
           fontSize={18}
           fontWeight="600"
@@ -93,7 +85,8 @@ function Hero() {
           padding="15px 35px"
           borderRadius={8}
         />
-        <Button
+        <Link
+          href="https://github.com/kryonlabs"
           text="View on GitHub"
           fontSize={18}
           fontWeight="600"
@@ -102,6 +95,7 @@ function Hero() {
           border={`1px solid ${colors.border}`}
           padding="15px 35px"
           borderRadius={8}
+          target="_blank"
         />
       </Row>
     </Column>
@@ -280,10 +274,10 @@ function Footer() {
         color={colors.secondaryText}
       />
       <Row gap={spacing.lg}>
-        <Text text="Features" fontSize={14} color={colors.secondaryText} />
-        <Text text="Documentation" fontSize={14} color={colors.secondaryText} />
-        <Text text="Community" fontSize={14} color={colors.secondaryText} />
-        <Text text="Support" fontSize={14} color={colors.secondaryText} />
+        <Link href="#features" text="Features" fontSize={14} color={colors.secondaryText} />
+        <Link href="/docs" text="Documentation" fontSize={14} color={colors.secondaryText} />
+        <Link href="https://github.com/kryonlabs/kryon/discussions" text="Community" fontSize={14} color={colors.secondaryText} target="_blank" />
+        <Link href="https://github.com/kryonlabs/kryon/issues" text="Support" fontSize={14} color={colors.secondaryText} target="_blank" />
       </Row>
     </Row>
   );
