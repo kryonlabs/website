@@ -3,7 +3,7 @@
  * Built with Kryon TSX bindings
  */
 
-import { kryonApp, Column, Row, Text, Button, Link, Container } from '@kryon/react';
+import { kryonApp, Column, Row, Text, Button, Link, Container, Image } from '@kryon/react';
 
 // Design System - Colors & Spacing
 const colors = {
@@ -263,6 +263,85 @@ function Workflow() {
   );
 }
 
+interface SponsorCardProps {
+  name: string;
+  image: string;
+  website: string;
+  twitter?: string;
+}
+
+function SponsorCard({ name, image, website, twitter }: SponsorCardProps) {
+  return (
+    <Column
+      background={colors.cardBg}
+      border={`1px solid ${colors.border}`}
+      borderRadius={10}
+      padding={spacing.xl}
+      alignItems="center"
+      gap={spacing.md}
+    >
+      <Image
+        src={image}
+        width={80}
+        height={80}
+        borderRadius={40}
+      />
+      <Text
+        text={name}
+        fontSize={18}
+        fontWeight="600"
+        color={colors.primaryText}
+      />
+      <Row gap={spacing.lg}>
+        <Link
+          href={website}
+          text="Website"
+          fontSize={14}
+          color={colors.accent}
+          target="_blank"
+        />
+        {twitter && (
+          <Link
+            href={`https://x.com/${twitter.replace('@', '')}`}
+            text={twitter}
+            fontSize={14}
+            color={colors.accent}
+            target="_blank"
+          />
+        )}
+      </Row>
+    </Column>
+  );
+}
+
+function Sponsors() {
+  return (
+    <Column
+      width="100%"
+      padding={`${spacing.xxxl * 2}px ${spacing.xxl}px`}
+      alignItems="center"
+    >
+      <Column width="100%" maxWidth={1200} alignItems="center">
+        <Text
+          text="Sponsored By"
+          fontSize={40}
+          fontWeight="bold"
+          color={colors.primaryText}
+          marginBottom={spacing.xxxl}
+        />
+        <Row gap={spacing.xxl} justifyContent="center">
+          <SponsorCard
+            name="5bitcube"
+            image="assets/sponsors/5bitcube.jpg"
+            website="https://5bitcube.com/"
+            twitter="@5bitcube"
+          />
+        </Row>
+      </Column>
+    </Column>
+  );
+}
+
 function Footer() {
   return (
     <Row
@@ -308,6 +387,7 @@ export default kryonApp({
       <Hero />
       <Features />
       <Workflow />
+      <Sponsors />
       <Footer />
     </Column>
   )

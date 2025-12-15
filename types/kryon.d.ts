@@ -91,6 +91,12 @@ declare module '@kryon/react' {
     target?: '_blank' | '_self' | '_parent' | '_top';
   }
 
+  // Image component props
+  interface ImageProps extends StyleProps {
+    src: string;
+    alt?: string;
+  }
+
   // Markdown component props
   interface MarkdownProps extends StyleProps {
     source?: string;           // Inline markdown content
@@ -107,6 +113,7 @@ declare module '@kryon/react' {
   export function Input(props: InputProps): JSX.Element;
   export function Checkbox(props: CheckboxProps): JSX.Element;
   export function Link(props: LinkProps): JSX.Element;
+  export function Image(props: ImageProps): JSX.Element;
   export function Markdown(props: MarkdownProps): JSX.Element;
 
   // Hooks
