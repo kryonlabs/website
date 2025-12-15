@@ -19,15 +19,18 @@ let app = kryonApp:
     windowHeight = 600
     windowTitle = "Hello Kryon"
 
-  Container:
-    width = 100.percent
-    height = auto
+  Body:
     backgroundColor = "#191970"
 
-    Text:
-      content = "Hello from Nim!"
-      fontSize = 32
-      color = "white"
+    Container:
+      width = 100.percent
+      justifyContent = "center"
+      alignItems = "center"
+
+      Text:
+        text = "Hello from Nim!"
+        fontSize = 32
+        color = "white"
 ```
 
 ## Installation
@@ -62,64 +65,97 @@ make build
 ```nim
 import kryon_dsl
 
+# Define an event handler
+proc handleButtonClick*() =
+  echo "Button clicked!"
+
 let app = kryonApp:
   Header:
     windowWidth = 800
     windowHeight = 600
     windowTitle = "My App"
 
-  Column:
-    width = 100.percent
-    gap = 16
+  Body:
+    backgroundColor = "#1E1E1E"
 
-    Text:
-      content = "Welcome!"
-      fontSize = 24
-      fontWeight = "bold"
+    Column:
+      width = 100.percent
+      gap = 16
+      padding = 20
 
-    Button:
-      title = "Click me"
-      onClick = proc() =
-        echo "Button clicked!"
+      Text:
+        text = "Welcome!"
+        fontSize = 24
+        color = "#FFFFFF"
 
-app.run()
+      Button:
+        text = "Click me"
+        background = "#4a90e2"
+        color = "#FFFFFF"
+        onClick = handleButtonClick
 ```
 
-### Reactive State
+### Reactive Components
 
-The Nim bindings include a powerful reactive system:
+The Nim bindings support reusable components with local state using the `{.kryonComponent.}` pragma:
 
 ```nim
 import kryon_dsl
 
-var counter = initReactiveState(0)
+# Define a reusable Counter component with local state
+proc Counter*(initialValue: int = 0): Element {.kryonComponent.} =
+  var value = initialValue
 
-let app = kryonApp:
-  Header:
-    windowTitle = "Counter"
-
-  Column:
-    width = 100.percent
+  result = Row:
     alignItems = "center"
-    gap = 16
+    gap = 32
+
+    Button:
+      text = "-"
+      fontSize = 24
+      width = 60
+      height = 50
+      backgroundColor = "#E74C3C"
+      onClick = proc() = value -= 1
 
     Text:
-      content = fmt"Count: {counter.value}"
+      text = $value
+      fontSize = 32
+      color = "#FFFFFF"
 
-    Row:
-      gap = 8
+    Button:
+      text = "+"
+      fontSize = 24
+      width = 60
+      height = 50
+      backgroundColor = "#2ECC71"
+      onClick = proc() = value += 1
 
-      Button:
-        title = "-"
-        onClick = proc() =
-          counter.value -= 1
+# Use the component in your app
+let app = kryonApp:
+  Header:
+    windowWidth = 800
+    windowHeight = 600
+    windowTitle = "Counters Demo"
 
-      Button:
-        title = "+"
-        onClick = proc() =
-          counter.value += 1
+  Body:
+    backgroundColor = "#1E1E1E"
 
-app.run()
+    Column:
+      width = 100.percent
+      height = 100.percent
+      justifyContent = "center"
+      alignItems = "center"
+      gap = 20
+
+      Text:
+        text = "Multiple Independent Counters"
+        fontSize = 24
+        color = "#FFFFFF"
+
+      Counter(initialValue = 5)
+      Counter()
+      Counter(initialValue = 10)
 ```
 
 ### Layout Components
@@ -131,19 +167,29 @@ Row:
   alignItems = "center"
   justifyContent = "space-between"
 
-  Text: content = "Left"
-  Text: content = "Right"
+  Text:
+    text = "Left"
+    color = "#FFFFFF"
+  Text:
+    text = "Right"
+    color = "#FFFFFF"
 
 # Column layout (vertical)
 Column:
   gap = 8
 
-  Text: content = "Top"
-  Text: content = "Bottom"
+  Text:
+    text = "Top"
+    color = "#FFFFFF"
+  Text:
+    text = "Bottom"
+    color = "#FFFFFF"
 
 # Centered content
 Center:
-  Text: content = "I'm centered!"
+  Text:
+    text = "I'm centered!"
+    color = "#FFFFFF"
 ```
 
 ### Styling
@@ -155,10 +201,11 @@ Container:
   backgroundColor = "#2c2c2c"
   borderRadius = 8
   padding = 16
-  border = "1px solid #444"
+  borderWidth = 1
+  borderColor = "#444444"
 
   Text:
-    content = "Styled container"
+    text = "Styled container"
     color = "#ffffff"
     fontSize = 14
 ```

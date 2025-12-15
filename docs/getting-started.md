@@ -34,6 +34,10 @@ Run with: `kryon run hello.kry`
 ```nim
 import kryon_dsl
 
+# Define event handler
+proc handleClick*() =
+  echo "Button clicked!"
+
 let app = kryonApp:
   Header:
     windowWidth = 800
@@ -54,10 +58,11 @@ let app = kryonApp:
 
         Button:
           text = "Click Me"
-          onClick = proc() =
-            echo "Button clicked!"
-
-app.run()
+          background = "#3498DB"
+          color = "#FFFFFF"
+          width = 120
+          height = 40
+          onClick = handleClick
 ```
 
 Run with: `kryon run hello.nim`
