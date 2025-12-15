@@ -95,48 +95,28 @@ let app = kryonApp:
         onClick = handleButtonClick
 ```
 
-### Reactive Components
+### Reactive State
 
-The Nim bindings support reusable components with local state using the `{.kryonComponent.}` pragma:
+The Nim bindings include a reactive system for dynamic UIs. Use `namedReactiveVar` to create reactive variables that automatically update bound UI components:
 
 ```nim
 import kryon_dsl
 
-# Define a reusable Counter component with local state
-proc Counter*(initialValue: int = 0): Element {.kryonComponent.} =
-  var value = initialValue
+# Create reactive state
+var counter = namedReactiveVar("counter", 0)
 
-  result = Row:
-    alignItems = "center"
-    gap = 32
+# Event handlers
+proc increment*() =
+  counter.value += 1
 
-    Button:
-      text = "-"
-      fontSize = 24
-      width = 60
-      height = 50
-      backgroundColor = "#E74C3C"
-      onClick = proc() = value -= 1
+proc decrement*() =
+  counter.value -= 1
 
-    Text:
-      text = $value
-      fontSize = 32
-      color = "#FFFFFF"
-
-    Button:
-      text = "+"
-      fontSize = 24
-      width = 60
-      height = 50
-      backgroundColor = "#2ECC71"
-      onClick = proc() = value += 1
-
-# Use the component in your app
 let app = kryonApp:
   Header:
     windowWidth = 800
     windowHeight = 600
-    windowTitle = "Counters Demo"
+    windowTitle = "Counter"
 
   Body:
     backgroundColor = "#1E1E1E"
@@ -149,14 +129,40 @@ let app = kryonApp:
       gap = 20
 
       Text:
-        text = "Multiple Independent Counters"
+        text = "Counter Demo"
         fontSize = 24
         color = "#FFFFFF"
 
-      Counter(initialValue = 5)
-      Counter()
-      Counter(initialValue = 10)
+      Row:
+        alignItems = "center"
+        gap = 32
+
+        Button:
+          text = "-"
+          fontSize = 24
+          width = 60
+          height = 50
+          backgroundColor = "#E74C3C"
+          onClick = decrement
+
+        Text:
+          text = $counter.value
+          fontSize = 32
+          color = "#FFFFFF"
+
+        Button:
+          text = "+"
+          fontSize = 24
+          width = 60
+          height = 50
+          backgroundColor = "#2ECC71"
+          onClick = increment
 ```
+
+Key points:
+- `namedReactiveVar("name", value)` creates a reactive variable
+- Access the value with `.value` (e.g., `counter.value`)
+- UI automatically updates when the value changes
 
 ### Layout Components
 
