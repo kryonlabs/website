@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "jsxImportSource": "@kryon",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["./types/kryon"]
+  },
+  "include": ["**/*.tsx", "**/*.ts", "types/**/*.d.ts"]
+}

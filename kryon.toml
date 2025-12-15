@@ -5,10 +5,10 @@ author = "Kryon Labs"
 description = "Official Kryon website built with Kryon"
 
 [build]
-target = "web"
+targets = ["web"]
 output_dir = "dist"
-entry = "index.js"
-frontend = "js"
+entry = "index.tsx"
+frontend = "tsx"
 
 [build.optimization]
 enabled = true
@@ -24,7 +24,7 @@ minify_js = true
 [dev]
 hot_reload = true
 port = 3000
-watch_paths = ["index.js", "src/**/*.js"]
+watch_paths = ["index.tsx", "src/**/*.tsx"]
 
 [metadata]
 created = "2025-11-30"

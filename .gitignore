@@ -1,1 +1,23 @@
-dist
+# Build outputs
+build/
+dist/
+
+# Cache
+.kryon_cache/
+
+# Dependencies
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Generated files
+*.kir
