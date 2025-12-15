@@ -13,14 +13,22 @@ frontend = "tsx"
 file = "index.tsx"
 path = "/"
 
-[[build.pages]]
-file = "docs.tsx"
-path = "/docs"
+# Auto-generate docs pages from markdown files
+[build.docs]
+enabled = true
+directory = "docs"
+template = "docs.tsx"
+base_path = "/docs"
+index_file = "getting-started.md"
 
 [build.optimization]
 enabled = true
 minify_css = true
 minify_js = true
+
+# Plugin dependencies
+[plugins]
+markdown = { path = "../kryon-plugin-markdown" }
 
 [web]
 generate_separate_files = true
@@ -31,7 +39,7 @@ minify_js = true
 [dev]
 hot_reload = true
 port = 3000
-watch_paths = ["index.tsx", "docs.tsx", "src/**/*.tsx"]
+watch_paths = ["index.tsx", "docs.tsx", "docs/**/*.md", "src/**/*.tsx"]
 
 [metadata]
 created = "2025-11-30"

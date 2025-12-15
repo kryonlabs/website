@@ -46,7 +46,6 @@ function Header() {
 
       {/* Navigation */}
       <Row gap={spacing.xl} alignItems="center">
-        <Link href="#features" text="Features" fontSize={16} color={colors.secondaryText} />
         <Link href="/docs" text="Documentation" fontSize={16} color={colors.secondaryText} />
         <Link href="https://github.com/kryonlabs" text="GitHub" fontSize={16} color={colors.secondaryText} target="_blank" />
       </Row>
@@ -58,23 +57,24 @@ function Hero() {
   return (
     <Column
       width="100%"
-      padding="120px 0"
+      padding={`120px ${spacing.xxl}px`}
       alignItems="center"
     >
-      <Text
-        text="Build Once. Deploy Natively. Everywhere."
-        fontSize={56}
-        fontWeight="bold"
-        color={colors.primaryText}
-        marginBottom={spacing.lg}
-      />
-      <Text
-        text="Kryon is a declarative UI framework that compiles your apps into an ultra-compact binary format for unparalleled performance on desktop, mobile, web, and embedded systems."
-        fontSize={20}
-        color={colors.secondaryText}
-        marginBottom={spacing.xxl}
-      />
-      <Row gap={spacing.lg}>
+      <Column width="100%" maxWidth={1000} alignItems="center">
+        <Text
+          text="Build Once. Deploy Natively. Everywhere."
+          fontSize={56}
+          fontWeight="bold"
+          color={colors.primaryText}
+          marginBottom={spacing.lg}
+        />
+        <Text
+          text="Kryon is a declarative UI framework that compiles your apps into an ultra-compact binary format for unparalleled performance on desktop, mobile, web, and embedded systems."
+          fontSize={20}
+          color={colors.secondaryText}
+          marginBottom={spacing.xxxl}
+        />
+        <Row gap={spacing.lg} marginTop={spacing.lg}>
         <Link
           href="/docs"
           text="Get Started"
@@ -97,7 +97,8 @@ function Hero() {
           borderRadius={8}
           target="_blank"
         />
-      </Row>
+        </Row>
+      </Column>
     </Column>
   );
 }
@@ -137,10 +138,12 @@ function Features() {
   return (
     <Column
       width="100%"
-      padding={`${spacing.xxxl * 2}px 0`}
+      padding={`${spacing.xxxl * 2}px ${spacing.xxl}px`}
       borderTop={`1px solid ${colors.border}`}
+      marginBottom={spacing.xxxl}
+      alignItems="center"
     >
-      <Column width="100%" padding={`0 ${spacing.lg}px`}>
+      <Column width="100%" maxWidth={1200}>
         <Text
           text="Why Kryon?"
           fontSize={40}
@@ -219,12 +222,13 @@ function Workflow() {
   return (
     <Column
       width="100%"
-      padding={`${spacing.xxxl * 2}px 0`}
+      padding={`${spacing.xxxl * 2}px ${spacing.xxl}px`}
       background={colors.cardBg}
       borderTop={`1px solid ${colors.border}`}
       borderBottom={`1px solid ${colors.border}`}
+      alignItems="center"
     >
-      <Column width="100%" padding={`0 ${spacing.lg}px`}>
+      <Column width="100%" maxWidth={1200}>
         <Text
           text="The Kryon Workflow"
           fontSize={40}
@@ -263,21 +267,26 @@ function Footer() {
   return (
     <Row
       width="100%"
-      padding={`${spacing.xxxl}px 0`}
-      borderTop={`1px solid ${colors.border}`}
-      justifyContent="space-between"
-      alignItems="center"
+      padding={`${spacing.xxxl}px ${spacing.xxl}px`}
+      justifyContent="center"
     >
-      <Text
-        text="© 2025 Kryon Labs. All rights reserved."
-        fontSize={14}
-        color={colors.secondaryText}
-      />
-      <Row gap={spacing.lg}>
-        <Link href="#features" text="Features" fontSize={14} color={colors.secondaryText} />
-        <Link href="/docs" text="Documentation" fontSize={14} color={colors.secondaryText} />
-        <Link href="https://github.com/kryonlabs/kryon/discussions" text="Community" fontSize={14} color={colors.secondaryText} target="_blank" />
-        <Link href="https://github.com/kryonlabs/kryon/issues" text="Support" fontSize={14} color={colors.secondaryText} target="_blank" />
+      <Row
+        width="100%"
+        maxWidth={1200}
+        borderTop={`1px solid ${colors.border}`}
+        paddingTop={spacing.xxxl}
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Text
+          text="© 2025 Kryon Labs. All rights reserved."
+          fontSize={14}
+          color={colors.secondaryText}
+        />
+        <Row gap={spacing.lg}>
+          <Link href="/docs" text="Documentation" fontSize={14} color={colors.secondaryText} />
+          <Link href="https://github.com/kryonlabs/kryon/issues" text="Support" fontSize={14} color={colors.secondaryText} target="_blank" />
+        </Row>
       </Row>
     </Row>
   );

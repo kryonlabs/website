@@ -63,18 +63,23 @@ function Sidebar() {
 
       {/* Getting Started Section */}
       <Text text="Getting Started" fontSize={12} fontWeight="bold" color={colors.secondaryText} marginTop={spacing.md} marginBottom={spacing.sm} />
-      <Link href="/docs" text="Introduction" fontSize={14} color={colors.primaryText} marginBottom={spacing.xs} />
+      <Link href="/docs" text="Introduction" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
       <Link href="/docs/architecture" text="Architecture" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
       <Link href="/docs/examples" text="Examples" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
 
       {/* Language Bindings Section */}
-      <Text text="Language Bindings" fontSize={12} fontWeight="bold" color={colors.secondaryText} marginTop={spacing.lg} marginBottom={spacing.sm} />
-      <Link href="/docs/lua" text="Lua" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
-      <Link href="/docs/javascript" text="JavaScript" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
+      <Text text="Language Bindings" fontSize={12} fontWeight="bold" color={colors.secondaryText} marginTop={spacing.xl} marginBottom={spacing.sm} />
+      <Link href="/docs/nim-bindings" text="Nim" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
+      <Link href="/docs/lua-bindings" text="Lua" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
+      <Link href="/docs/js-bindings" text="JavaScript" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
       <Link href="/docs/typescript" text="TypeScript" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
 
+      {/* Plugins Section */}
+      <Text text="Plugins" fontSize={12} fontWeight="bold" color={colors.secondaryText} marginTop={spacing.xl} marginBottom={spacing.sm} />
+      <Link href="/docs/plugins" text="Plugin System" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
+
       {/* Resources Section */}
-      <Text text="Resources" fontSize={12} fontWeight="bold" color={colors.secondaryText} marginTop={spacing.lg} marginBottom={spacing.sm} />
+      <Text text="Resources" fontSize={12} fontWeight="bold" color={colors.secondaryText} marginTop={spacing.xl} marginBottom={spacing.sm} />
       <Link href="https://github.com/kryonlabs/kryon" text="GitHub" fontSize={14} color={colors.secondaryText} target="_blank" marginBottom={spacing.xs} />
     </Column>
   );
