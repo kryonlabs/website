@@ -70,13 +70,18 @@ function Sidebar() {
       {/* Language Bindings Section */}
       <Text text="Language Bindings" fontSize={12} fontWeight="bold" color={colors.secondaryText} marginTop={spacing.xl} marginBottom={spacing.sm} />
       <Link href="/docs/nim-bindings" text="Nim" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
-      <Link href="/docs/lua-bindings" text="Lua" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
-      <Link href="/docs/js-bindings" text="JavaScript" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
+      <Link href="/docs/rust-bindings" text="Rust" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
       <Link href="/docs/typescript" text="TypeScript" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
+      <Link href="/docs/js-bindings" text="JavaScript" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
+      <Link href="/docs/lua-bindings" text="Lua" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
+      <Link href="/docs/c-frontend" text="C" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
 
-      {/* Plugins Section */}
-      <Text text="Plugins" fontSize={12} fontWeight="bold" color={colors.secondaryText} marginTop={spacing.xl} marginBottom={spacing.sm} />
+      {/* Advanced Section */}
+      <Text text="Advanced" fontSize={12} fontWeight="bold" color={colors.secondaryText} marginTop={spacing.xl} marginBottom={spacing.sm} />
+      <Link href="/docs/ir-pipeline" text="IR Pipeline" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
+      <Link href="/docs/ir-formats" text="IR File Formats (.kir/.kirb)" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
       <Link href="/docs/plugins" text="Plugin System" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
+      <Link href="/docs/developer-guide" text="Developer Guide" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
 
       {/* Resources Section */}
       <Text text="Resources" fontSize={12} fontWeight="bold" color={colors.secondaryText} marginTop={spacing.xl} marginBottom={spacing.sm} />

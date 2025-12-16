@@ -1,319 +1,364 @@
 # Kryon Architecture
 
-This document describes the architecture of Kryon, a cross-platform UI framework with an intermediate representation (IR) layer.
-
 ## Overview
 
-Kryon separates concerns into distinct layers:
+Kryon is a multi-platform UI framework designed with a clean separation between the core logic, rendering backends, and language frontends.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         FRONTENDS                                │
-│   .kry (declarative)  |  .nim (DSL)  |  .lua  |  .js/.ts        │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    INTERMEDIATE REPRESENTATION                   │
-│   .kir (JSON IR)  ←→  .kirb (Binary IR)                         │
-│   Components, styles, layout, reactive manifest, logic blocks   │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-              ┌───────────────┴───────────────┐
-              ▼                               ▼
-┌─────────────────────────┐     ┌─────────────────────────┐
-│     NATIVE TARGET       │     │      VM TARGET          │
-│  Transpile to C/Nim     │     │   .krb (bytecode)       │
-│  Compile to binary      │     │   Kryon VM Runtime      │
-└─────────────────────────┘     └─────────────────────────┘
-                                              │
-                                              ▼
-                              ┌─────────────────────────────────┐
-                              │         RENDERERS               │
-                              │  SDL3  |  Terminal  |  Web      │
-                              │       (pluggable)               │
-                              └─────────────────────────────────┘
-```
+### Core Philosophy
+*   **Minimal surfaces, maximal flexibility.**
+*   **Hardware-aware abstractions.**
+*   **Declarative UI in your application language.**
 
-## File Formats
+## Pipeline Diagram
 
-### Source Formats
+```mermaid
+flowchart TB
+    subgraph Frontends["FRONTENDS (Language Bindings)"]
+        direction LR
+        Nim["Nim<br/>(DSL Macros)"]
+        TS["TypeScript<br/>(JSX/Bun)"]
+        Lua["Lua<br/>(DSL Tables)"]
+        C["C<br/>(Direct API)"]
+    end
 
-| Format | Description | Example |
-|--------|-------------|---------|
-| `.kry` | Declarative syntax | `Button { title: "Click" }` |
-| `.nim` | Nim DSL with macros | `Button: title = "Click"` |
-| `.lua` | Lua bindings | `Button { title = "Click" }` |
+    subgraph Core["IR CORE (C Library)"]
+        direction TB
+        Builder["ir_builder<br/>• Components<br/>• Tree mgmt<br/>• Styles"]
+        Layout["ir_layout<br/>• Flexbox<br/>• Size calc<br/>• Alignment"]
+        Events["ir_events<br/>• Click/Hover<br/>• Focus/Blur<br/>• Keyboard"]
+        IRComp["IRComponent<br/>(Tree Structure)"]
 
-### Intermediate Formats
+        Builder --> IRComp
+        Layout --> IRComp
+        Events --> IRComp
+    end
 
-| Format | Description | Use Case |
-|--------|-------------|----------|
-| `.kir` | JSON IR | Human-readable, debugging, tooling |
-| `.kirb` | Binary IR | Optimized storage (5-10× smaller) |
+    subgraph Backends["BACKENDS (Platform Renderers)"]
+        direction LR
+        SDL3["SDL3<br/>• GPU accel<br/>• TTF fonts<br/>• Desktop"]
+        Terminal["Terminal<br/>• libtickit<br/>• Unicode<br/>• SSH-able"]
+        Framebuffer["Framebuffer<br/>• /dev/fb0<br/>• Embedded<br/>• No X11"]
+        Web["Web<br/>• HTML gen<br/>• CSS flexbox<br/>• Browser"]
+    end
 
-Both `.kir` and `.kirb` contain the same information:
-- Component tree (types, IDs, properties)
-- Style definitions (colors, dimensions, layout)
-- Reactive manifest (variables, conditionals)
-- Logic blocks (event handlers, functions)
+    Nim --> Core
+    TS --> Core
+    Lua --> Core
+    C --> Core
 
-### Executable Format
+    Core --> SDL3
+    Core --> Terminal
+    Core --> Framebuffer
+    Core --> Web
 
-| Format | Description | Runtime |
-|--------|-------------|---------|
-| `.krb` | VM bytecode | Kryon VM + pluggable renderer |
-
-The `.krb` format is a compiled, executable bundle containing:
-- UI component tree (from IR)
-- Compiled bytecode for event handlers
-- String constants and initial values
-- Optional: debug symbols, reactive manifest
-
-## Compilation Targets
-
-### Native Target
-
-For maximum performance, Kryon can transpile to native source code:
-
-```
-.kry → .kir → C source → gcc → native binary
-.kry → .kir → Nim source → nim c → native binary
+    SDL3 --> Desktop["Desktop Window<br/>(Linux/macOS/Windows)"]
+    Terminal --> Term["Terminal Emulator<br/>(xterm/konsole/SSH)"]
+    Framebuffer --> Embedded["Embedded Display<br/>(RPi/MCU)"]
+    Web --> Browser["Web Browser<br/>(Chrome/Firefox/Safari)"]
 ```
 
-**Characteristics:**
-- Fastest execution
-- No runtime VM overhead
-- Platform-specific binaries
-- Larger file sizes
+## Data Flow
 
-### VM Target
+```mermaid
+flowchart TB
+    subgraph Define["1. DEFINE UI"]
+        NimDSL["Nim DSL<br/>Container:<br/>  Button: text='Click'"]
+        TSXDSL["TypeScript JSX<br/>&lt;column&gt;<br/>  &lt;button title='Click' /&gt;<br/>&lt;/column&gt;"]
+    end
 
-For portability and hot-reload, Kryon compiles to bytecode:
+    subgraph IRTree["2. CREATE IR TREE"]
+        Tree["IRComponent (Column)<br/>├─ style: width=100%<br/>├─ layout: gap=10<br/>└─ children:<br/>    └─ IRComponent (Button)<br/>        └─ events: onClick"]
+    end
 
-```
-.kry → .kir → .krb (bytecode)
-```
+    subgraph Layout["3. COMPUTE LAYOUT"]
+        Calc["ir_layout.c<br/>• Resolve dimensions<br/>• Position offsets<br/>• Flex distribution<br/>• Alignment"]
+    end
 
-**Characteristics:**
-- Single file runs anywhere
-- Hot-reload support
-- Pluggable renderers
-- Smaller distribution size
+    subgraph Render["4. RENDER TO TARGET"]
+        direction LR
+        R1["SDL3<br/>Draw rects<br/>TTF text"]
+        R2["Terminal<br/>Box chars<br/>ANSI color"]
+        R3["Framebuffer<br/>Direct pixels"]
+        R4["Web<br/>Generate HTML<br/>CSS flexbox"]
+    end
 
-## Component Model
-
-### IR Component Structure
-
-```c
-typedef struct IRComponent {
-    IRComponentType type;      // CONTAINER, TEXT, BUTTON, etc.
-    uint32_t id;               // Unique identifier
-    char* text_content;        // For TEXT components
-    IRStyle* style;            // Visual styling
-    IRLayout* layout;          // Flexbox layout
-    IRComponent** children;    // Child components
-    int child_count;
-    IREvent** events;          // Event handlers
-    // ... additional fields
-} IRComponent;
+    NimDSL --> Tree
+    TSXDSL --> Tree
+    Tree --> Calc
+    Calc --> R1
+    Calc --> R2
+    Calc --> R3
+    Calc --> R4
 ```
 
-### Component Types
+## System Architecture
 
-| Type | Description |
-|------|-------------|
-| `CONTAINER` | Generic container (div) |
-| `ROW` | Horizontal flex container |
-| `COLUMN` | Vertical flex container |
-| `TEXT` | Text display |
-| `BUTTON` | Clickable button |
-| `INPUT` | Text input |
-| `CHECKBOX` | Toggle checkbox |
-| `DROPDOWN` | Selection dropdown |
-| `TAB_GROUP` | Tab container |
-| `TAB_BAR` | Tab header bar |
-| `TAB` | Individual tab |
-| `TAB_CONTENT` | Tab content area |
-| `TAB_PANEL` | Tab panel |
+### Layered Onion Model
 
-## Reactive System
+```mermaid
+flowchart TB
+    subgraph L1["Application Layer"]
+        App["Your Business Logic<br/>(Nim/Rust/C/JS/Lua)"]
+    end
 
-### State Variables
+    subgraph L2["Interface Layer"]
+        Bindings["Language Bindings & Macros<br/>(Nim DSL, JSX Runtime)"]
+    end
 
-```kry
-state counter: int = 0
-state name: string = "World"
+    subgraph L3["Core Layer"]
+        Core2["Component Model, State, Layout<br/>(C ABI)"]
+    end
+
+    subgraph L4["Renderer Abstraction"]
+        Primitives["Primitive Drawing Commands<br/>(C ABI)"]
+    end
+
+    subgraph L5["Platform Backends"]
+        Platforms["SDL3 | Terminal | Framebuffer | Web"]
+    end
+
+    L1 --> L2 --> L3 --> L4 --> L5
 ```
 
-Variables in the reactive manifest can be:
-- Integers, strings, booleans
-- Arrays (mixed types)
-- Referenced in text: `"Count: {{counter}}"`
-- Updated by event handlers
+### Critical Boundary
 
-### Conditionals
+The **Core Layer** and **Renderer Abstraction** expose a pure C ABI. This allows:
+*   Microcontrollers to link directly to the C core.
+*   Desktop apps to use high-level bindings.
+*   Web apps to compile to WASM.
 
-```kry
-if counter > 0 {
-    Text { content: "Positive!" }
-}
+## Component Types
+
+```mermaid
+flowchart TB
+    subgraph Layout["LAYOUT COMPONENTS"]
+        Container["Container (div)"]
+        Container --> Row["Row (←→)"]
+        Container --> Column["Column (↑↓)"]
+        Container --> Center["Center (⊕)"]
+    end
+
+    subgraph Content["CONTENT COMPONENTS"]
+        Text["Text"]
+        Button["Button"]
+        Input["Input"]
+        Checkbox["Checkbox"]
+        Dropdown["Dropdown"]
+        Image["Image"]
+    end
+
+    subgraph Special["SPECIAL COMPONENTS"]
+        TabGroup["TabGroup"]
+        Canvas["Canvas"]
+        Markdown["Markdown"]
+    end
 ```
-
-Conditionals control component visibility based on state.
-
-### Event Handlers
-
-```kry
-Button {
-    title: "Increment"
-    onClick: {
-        counter = counter + 1
-    }
-}
-```
-
-Handlers can be:
-- Universal statements (transpilable)
-- Embedded source code (language-specific)
-
-## VM Architecture
-
-### .krb File Structure
-
-```
-┌──────────────────────────────────────┐
-│ Header (32 bytes)                    │
-│   Magic: "KRBY"                      │
-│   Version: 1.0                       │
-│   Section offsets                    │
-├──────────────────────────────────────┤
-│ UI Section                           │
-│   Component tree (binary encoded)    │
-├──────────────────────────────────────┤
-│ Code Section                         │
-│   Bytecode for event handlers        │
-├──────────────────────────────────────┤
-│ Data Section                         │
-│   String constants                   │
-│   Initial values                     │
-├──────────────────────────────────────┤
-│ Meta Section (optional)              │
-│   Debug symbols                      │
-│   Source maps                        │
-└──────────────────────────────────────┘
-```
-
-### Bytecode Instructions
-
-The VM uses a stack-based instruction set:
-
-| Category | Instructions |
-|----------|--------------|
-| Stack | `PUSH_INT`, `PUSH_STR`, `POP`, `DUP` |
-| Variables | `LOAD_VAR`, `STORE_VAR`, `LOAD_GLOBAL`, `STORE_GLOBAL` |
-| Arithmetic | `ADD`, `SUB`, `MUL`, `DIV`, `MOD`, `NEG` |
-| Comparison | `EQ`, `NE`, `LT`, `LE`, `GT`, `GE` |
-| Logic | `AND`, `OR`, `NOT` |
-| Control | `JMP`, `JMP_IF`, `JMP_IF_NOT`, `CALL`, `RET` |
-| UI | `SET_PROP`, `GET_PROP`, `SET_VISIBLE`, `TRIGGER_REDRAW` |
-
-### Runtime Execution
-
-```
-┌─────────────────┐     ┌─────────────────┐
-│   .krb Module   │────▶│  Kryon Runtime  │
-└─────────────────┘     └────────┬────────┘
-                                 │
-                   ┌─────────────┼─────────────┐
-                   │             │             │
-                   ▼             ▼             ▼
-            ┌──────────┐  ┌──────────┐  ┌──────────┐
-            │   SDL3   │  │ Terminal │  │   Web    │
-            │ Renderer │  │ Renderer │  │ Renderer │
-            └──────────┘  └──────────┘  └──────────┘
-```
-
-The runtime:
-1. Loads the `.krb` module
-2. Initializes state from data section
-3. Builds component tree from UI section
-4. Attaches to a renderer
-5. Enters main loop (render, handle events, execute bytecode)
-
-## Renderer Architecture
-
-Renderers are pluggable backends that display the UI:
-
-```c
-typedef struct IRRenderer {
-    bool (*init)(int width, int height, const char* title);
-    void (*shutdown)(void);
-    void (*begin_frame)(void);
-    void (*end_frame)(void);
-    void (*render_component)(IRComponent* component);
-    bool (*poll_events)(IREvent* event);
-} IRRenderer;
-```
-
-### Available Renderers
-
-| Renderer | Platform | Features |
-|----------|----------|----------|
-| SDL3 | Desktop | GPU-accelerated, full graphics |
-| Terminal | Any | Text-based, no graphics |
-| Web | Browser | HTML/CSS output (planned) |
 
 ## Directory Structure
 
 ```
 kryon/
-├── ir/                     # IR core (C)
-│   ├── ir_core.h           # Type definitions
-│   ├── ir_builder.c        # Component creation
-│   ├── ir_layout.c         # Flexbox layout
-│   ├── ir_serialization.c  # .kir/.kirb formats
-│   ├── ir_executor.c       # Event dispatch
-│   ├── ir_krb.c            # .krb format
-│   └── ir_vm_exec.c        # VM execution
+├── ir/                          # IR Core (C)
+│   ├── ir_core.h               # Component types, structs
+│   ├── ir_builder.c            # Tree construction
+│   ├── ir_layout.c             # Flexbox layout
+│   └── ir_events.c             # Event handling
 │
 ├── backends/
-│   ├── desktop/            # SDL3 + Terminal
-│   └── web/                # Web (planned)
+│   ├── desktop/                # Desktop backends
+│   │   ├── sdl_backend.c       # SDL3 rendering
+│   │   └── ir_desktop_renderer.c
+│   └── web/                    # Web backend
+│       ├── html_generator.c    # HTML output
+│       ├── css_generator.c     # CSS output
+│       └── ir_web_renderer.c
 │
 ├── bindings/
-│   ├── nim/                # Nim DSL
-│   ├── lua/                # Lua bindings
-│   └── typescript/         # TypeScript (planned)
+│   ├── nim/                    # Nim frontend
+│   │   ├── kryon_dsl.nim       # DSL macros
+│   │   ├── runtime.nim         # Event handlers
+│   │   └── reactive_system.nim # State management
+│   └── typescript/             # TypeScript frontend
+│       └── src/
+│           ├── jsx-runtime.ts  # JSX transform
+│           ├── renderer.ts     # IRNode → C IR
+│           ├── ffi.ts          # Bun FFI bindings
+│           └── app.ts          # Entry point
 │
-├── cli/                    # CLI tool
-│   ├── main.nim            # Entry point
-│   ├── compile.nim         # Compilation
-│   ├── kry_parser.nim      # .kry parser
-│   └── codegen.nim         # Code generation
+├── examples/
+│   ├── nim/                    # Nim examples
+│   │   ├── hello_world.nim
+│   │   ├── button_demo.nim
+│   │   └── ...
+│   └── typescript/             # TypeScript examples
+│       ├── hello_world.tsx
+│       ├── button_demo.tsx
+│       └── ...
 │
-└── examples/
-    └── kry/                # Source examples
+└── build/                      # Compiled libraries
+    ├── libkryon_ir.a
+    ├── libkryon_desktop.so
+    └── libkryon_web.so
 ```
 
-## Future Vision
+## Running Examples
 
-### Kryon Launcher
+```bash
+# Nim + SDL3 (default)
+./run_example.sh hello_world
+./run_example.sh hello_world nim sdl3
 
-A standalone application that can:
-- Open `.krb` files directly (double-click)
-- Auto-compile `.kry` files on open
-- Hot-reload during development
-- Like Love2D for `.love` files
+# Nim + Terminal
+./run_example.sh hello_world nim terminal
 
-### Additional VM Targets
+# TypeScript + SDL3
+./run_example.sh hello_world ts
+./run_example.sh hello_world typescript sdl3
 
-- LuaJIT VM (for Lua frontends)
-- QuickJS VM (for JS/TS frontends)
-- Python VM (for Python frontends)
+# TypeScript + Web (generates HTML, starts server)
+./run_example.sh hello_world ts web
 
-### Web Deployment
+# By number (from example list)
+./run_example.sh 22   # hello_world typescript
+```
 
-- Compile to `.krb` + WASM runtime
-- Single-file web app distribution
-- Progressive web app support
+## Core Layer (C99 ABI)
+
+The core layer handles:
+*   Component tree lifecycle.
+*   Unified event system.
+*   Flexbox-inspired layout engine.
+*   Style resolution.
+*   Storage API.
+
+It guarantees:
+*   **No global state.**
+*   **Deterministic layout.**
+*   **No hidden allocations.**
+*   **Fixed-point math** for MCU compatibility.
+
+## Renderer Abstraction
+
+All backends must implement a minimal set of primitive commands:
+*   `draw_rect`
+*   `draw_text`
+*   `draw_line`
+*   `swap_buffers`
+
+## Frontend × Backend Matrix
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px'}}}%%
+flowchart LR
+    subgraph Matrix["Compatibility Matrix"]
+        direction TB
+
+        subgraph Headers[" "]
+            direction LR
+            H1["SDL3"]
+            H2["Terminal"]
+            H3["Framebuffer"]
+            H4["Web"]
+        end
+
+        subgraph NimRow["Nim"]
+            N1["✓"]
+            N2["✓"]
+            N3["✓"]
+            N4["✓"]
+        end
+
+        subgraph TSRow["TypeScript"]
+            T1["✓"]
+            T2["✓"]
+            T3["~"]
+            T4["✓"]
+        end
+
+        subgraph LuaRow["Lua"]
+            L1["-"]
+            L2["-"]
+            L3["-"]
+            L4["-"]
+        end
+
+        subgraph CRow["C"]
+            C1["✓"]
+            C2["✓"]
+            C3["✓"]
+            C4["✓"]
+        end
+    end
+```
+
+| Frontend   | SDL3 | Terminal | Framebuffer | Web |
+|------------|:----:|:--------:|:-----------:|:---:|
+| Nim        |  ✓   |    ✓     |      ✓      |  ✓  |
+| TypeScript |  ✓   |    ✓     |      ~      |  ✓  |
+| Lua        |  -   |    -     |      -      |  -  |
+| C          |  ✓   |    ✓     |      ✓      |  ✓  |
+
+**Legend:** ✓ = Supported, ~ = Partial, - = Planned
+
+## Backend Comparison
+
+```mermaid
+graph TB
+    subgraph SDL3["SDL3 Backend"]
+        SDL3_use["Use: Desktop apps, Games"]
+        SDL3_plat["Platform: Linux/macOS/Windows"]
+        SDL3_feat["Features: GPU accel, TTF fonts, Mouse/KB"]
+    end
+
+    subgraph Terminal["Terminal Backend"]
+        Term_use["Use: CLI tools, Remote/SSH"]
+        Term_plat["Platform: Any terminal"]
+        Term_feat["Features: TUI boxes, Unicode, ANSI color"]
+    end
+
+    subgraph Framebuffer["Framebuffer Backend"]
+        FB_use["Use: Embedded, Kiosk"]
+        FB_plat["Platform: Linux /dev/fb0, RPi"]
+        FB_feat["Features: Direct pixels, No X11, Minimal deps"]
+    end
+
+    subgraph Web["Web Backend"]
+        Web_use["Use: Browser apps, Dashboards"]
+        Web_plat["Platform: Any browser"]
+        Web_feat["Features: HTML gen, CSS flexbox, JS events"]
+    end
+```
+
+| Backend     | Use Case                | Platform              | Key Features                        |
+|-------------|-------------------------|-----------------------|-------------------------------------|
+| SDL3        | Desktop apps, Games     | Linux/macOS/Windows   | GPU accel, TTF fonts, Mouse/KB      |
+| Terminal    | CLI tools, Remote/SSH   | Any terminal          | TUI boxes, Unicode, ANSI color      |
+| Framebuffer | Embedded, Kiosk         | Linux /dev/fb0, RPi   | Direct pixels, No X11, Minimal deps |
+| Web         | Browser apps, Dashboards| Any browser           | HTML gen, CSS flexbox, JS events    |
+
+## Frontend Overview
+
+| Frontend   | Syntax                | Runtime         | Best For                      |
+|------------|----------------------|-----------------|-------------------------------|
+| Nim        | DSL macros           | Compiled native | Performance, Desktop, Embedded|
+| TypeScript | JSX syntax           | Bun + FFI       | Web devs, Rapid prototyping   |
+| Lua        | Table-based (planned)| Lua VM          | Scripting, Hot-reload, Modding|
+| C          | Direct API calls     | Compiled native | Max control, Library integration |
+
+## Quick Reference
+
+```bash
+# List all examples
+./run_example.sh
+
+# Frontend options: nim, ts (typescript), lua, c
+# Backend options: sdl3, terminal, framebuffer, web
+
+# Examples:
+./run_example.sh hello_world              # nim + sdl3 (default)
+./run_example.sh hello_world nim sdl3     # nim + sdl3 (explicit)
+./run_example.sh hello_world nim terminal # nim + terminal
+./run_example.sh hello_world ts           # typescript + sdl3
+./run_example.sh hello_world ts web       # typescript + web (serves HTML)
+./run_example.sh hello_world ts terminal  # typescript + terminal
+```
