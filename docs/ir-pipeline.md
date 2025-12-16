@@ -1,7 +1,6 @@
 # Kryon IR Pipeline Guide
 
 **Version:** 2.0
-**Last Updated:** 2025-12-01
 
 ## Table of Contents
 

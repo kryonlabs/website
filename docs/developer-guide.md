@@ -1,7 +1,6 @@
 # Kryon IR Developer Guide
 
 **Version:** 2.0
-**Last Updated:** 2024-11-30
 
 ## Table of Contents
 
