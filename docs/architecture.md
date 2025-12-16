@@ -9,6 +9,17 @@ Kryon is a multi-platform UI framework designed with a clean separation between 
 *   **Hardware-aware abstractions.**
 *   **Declarative UI in your application language.**
 
+## File Formats
+
+Kryon uses two runtime file formats:
+
+- **.kir** - JSON intermediate representation (human-readable, for development and debugging)
+- **.krb** - Standalone binary package (like .love files), portable across all renderers
+
+**Native Targets** (Nim, C, Rust) compile directly to native code that generates IR at runtime.
+
+**VM Targets** (Lua, JavaScript/TypeScript, Python, .kry) compile to `.krb` packages that run in any Kryon renderer.
+
 ## Pipeline Diagram
 
 ```mermaid

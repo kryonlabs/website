@@ -79,7 +79,6 @@ function Sidebar() {
       {/* Advanced Section */}
       <Text text="Advanced" fontSize={12} fontWeight="bold" color={colors.secondaryText} marginTop={spacing.xl} marginBottom={spacing.sm} />
       <Link href="/docs/ir-pipeline" text="IR Pipeline" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
-      <Link href="/docs/ir-formats" text="IR File Formats (.kir/.kirb)" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
       <Link href="/docs/plugins" text="Plugin System" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
       <Link href="/docs/developer-guide" text="Developer Guide" fontSize={14} color={colors.secondaryText} marginBottom={spacing.xs} />
 
