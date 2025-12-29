@@ -15,6 +15,10 @@ declare module '@kryon/react' {
   interface StyleProps {
     width?: number | string;
     height?: number | string;
+    minWidth?: number | string;
+    maxWidth?: number | string;
+    minHeight?: number | string;
+    maxHeight?: number | string;
     background?: string;
     backgroundColor?: string;
     color?: string;
@@ -60,6 +64,7 @@ declare module '@kryon/react' {
   // Text component props
   interface TextProps extends StyleProps {
     text: string;
+    maxTextWidth?: number;  // Maximum width for text wrapping
   }
 
   // Button component props

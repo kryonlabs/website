@@ -1,6 +1,8 @@
 # Getting Started with Kryon
 
-Kryon is a declarative UI framework with multiple frontends (.kry, .nim, .tsx) and rendering backends (SDL3, terminal, web).
+![Kryon Logo](https://via.placeholder.com/150)
+
+Kryon is a declarative UI framework with multiple language bindings (.kry, .nim, .tsx), rendering backends (SDL3, terminal), and codegens for transpilation (HTML/web, TSX, JSX).
 
 ## Quick Start
 
@@ -111,25 +113,40 @@ kryon inspect-detailed app.kir           # Full analysis
 # Development mode with hot reload
 kryon dev examples/nim/habits.nim
 
-# Build for web
+# Transpile to HTML/Web (codegen)
 kryon build --target web
 ```
 
-## Available Backends
+## Rendering Backends
+
+Rendering backends use Kryon's renderer to draw UI directly:
 
 - **SDL3** - Modern cross-platform, hardware accelerated (default)
 - **Terminal** - Text-based UI using ANSI escape sequences
-- **Web** - HTML/CSS/JavaScript output
 
 ```bash
 # Set renderer via environment variable
-KRYON_RENDERER=terminal kryon run app.kry
+KRYON_RENDERER=sdl3 kryon run app.kry      # Default
+KRYON_RENDERER=terminal kryon run app.kry  # Terminal rendering
+```
+
+## Codegens (Transpilers)
+
+Codegens generate source code for browsers or other frameworks to render:
+
+- **HTML/Web** - Transpile to HTML/CSS/JavaScript for browsers
+- **TSX** - Generate TypeScript React components
+- **JSX** - Generate JavaScript React components
+
+```bash
+# Transpile to browser-ready HTML
+kryon build --target web app.kry
 ```
 
 ## Features
 
 - Declarative DSL syntax
-- Multiple rendering backends
+- Multiple rendering backends (SDL3, Terminal) and codegens (HTML/Web, TSX, JSX)
 - Event handlers (onClick, onChange, onSubmit, etc.)
 - Reactive state management
 - Flexible layout system (Column, Row, Center, Grid)

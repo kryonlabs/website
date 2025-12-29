@@ -2,12 +2,19 @@
 
 ## Overview
 
-Kryon is a multi-platform UI framework designed with a clean separation between the core logic, rendering backends, and language frontends.
+Kryon is a multi-platform UI framework designed with a clean separation between language bindings, the IR core, rendering backends, and transpilation targets.
 
 ### Core Philosophy
 *   **Minimal surfaces, maximal flexibility.**
 *   **Hardware-aware abstractions.**
 *   **Declarative UI in your application language.**
+
+### Architecture Layers
+
+**Language Bindings** → **KIR Pipeline** → **Rendering Backends + Codegens**
+
+- **Rendering Backends** (SDL3, Terminal): Use Kryon's renderer to draw UI directly
+- **Codegens/Transpilers** (HTML/Web, TSX, JSX): Generate code that browsers/tools render
 
 ## File Formats
 
@@ -34,9 +41,9 @@ flowchart TB
 
     subgraph Core["IR CORE (C Library)"]
         direction TB
-        Builder["ir_builder<br/>• Components<br/>• Tree mgmt<br/>• Styles"]
-        Layout["ir_layout<br/>• Flexbox<br/>• Size calc<br/>• Alignment"]
-        Events["ir_events<br/>• Click/Hover<br/>• Focus/Blur<br/>• Keyboard"]
+        Builder["ir_builder<br/>* Components<br/>* Tree mgmt<br/>* Styles"]
+        Layout["ir_layout<br/>* Flexbox<br/>* Size calc<br/>* Alignment"]
+        Events["ir_events<br/>* Click/Hover<br/>* Focus/Blur<br/>* Keyboard"]
         IRComp["IRComponent<br/>(Tree Structure)"]
 
         Builder --> IRComp
@@ -44,12 +51,18 @@ flowchart TB
         Events --> IRComp
     end
 
-    subgraph Backends["BACKENDS (Platform Renderers)"]
+    subgraph Backends["RENDERING BACKENDS (Use Kryon's Renderer)"]
         direction LR
-        SDL3["SDL3<br/>• GPU accel<br/>• TTF fonts<br/>• Desktop"]
-        Terminal["Terminal<br/>• libtickit<br/>• Unicode<br/>• SSH-able"]
-        Framebuffer["Framebuffer<br/>• /dev/fb0<br/>• Embedded<br/>• No X11"]
-        Web["Web<br/>• HTML gen<br/>• CSS flexbox<br/>• Browser"]
+        SDL3["SDL3<br/>* GPU accel<br/>* TTF fonts<br/>* Desktop"]
+        Terminal["Terminal<br/>* libtickit<br/>* Unicode<br/>* SSH-able"]
+        Framebuffer["Framebuffer<br/>* /dev/fb0<br/>* Embedded<br/>* No X11"]
+    end
+
+    subgraph Codegens["CODEGENS (Generate Browser/Source Code)"]
+        direction LR
+        HTML["HTML/Web<br/>* HTML gen<br/>* CSS flexbox<br/>* Browser"]
+        TSX["TSX<br/>* TypeScript<br/>* React compat"]
+        JSX["JSX<br/>* JavaScript<br/>* React compat"]
     end
 
     Nim --> Core
@@ -60,12 +73,16 @@ flowchart TB
     Core --> SDL3
     Core --> Terminal
     Core --> Framebuffer
-    Core --> Web
+    Core --> HTML
+    Core --> TSX
+    Core --> JSX
 
     SDL3 --> Desktop["Desktop Window<br/>(Linux/macOS/Windows)"]
     Terminal --> Term["Terminal Emulator<br/>(xterm/konsole/SSH)"]
     Framebuffer --> Embedded["Embedded Display<br/>(RPi/MCU)"]
-    Web --> Browser["Web Browser<br/>(Chrome/Firefox/Safari)"]
+    HTML --> Browser["Web Browser<br/>(Chrome/Firefox/Safari)"]
+    TSX --> ReactTS["React/TypeScript Apps"]
+    JSX --> ReactJS["React/JavaScript Apps"]
 ```
 
 ## Data Flow
@@ -78,19 +95,24 @@ flowchart TB
     end
 
     subgraph IRTree["2. CREATE IR TREE"]
-        Tree["IRComponent (Column)<br/>├─ style: width=100%<br/>├─ layout: gap=10<br/>└─ children:<br/>    └─ IRComponent (Button)<br/>        └─ events: onClick"]
+        Tree["IRComponent (Column)<br/>+- style: width=100%<br/>+- layout: gap=10<br/>+- children:<br/>    +- IRComponent (Button)<br/>        +- events: onClick"]
     end
 
     subgraph Layout["3. COMPUTE LAYOUT"]
-        Calc["ir_layout.c<br/>• Resolve dimensions<br/>• Position offsets<br/>• Flex distribution<br/>• Alignment"]
+        Calc["ir_layout.c<br/>* Resolve dimensions<br/>* Position offsets<br/>* Flex distribution<br/>* Alignment"]
     end
 
-    subgraph Render["4. RENDER TO TARGET"]
+    subgraph RenderBackends["4A. RENDERING BACKENDS"]
         direction LR
         R1["SDL3<br/>Draw rects<br/>TTF text"]
         R2["Terminal<br/>Box chars<br/>ANSI color"]
         R3["Framebuffer<br/>Direct pixels"]
-        R4["Web<br/>Generate HTML<br/>CSS flexbox"]
+    end
+
+    subgraph Codegens2["4B. CODEGENS (Transpilers)"]
+        direction LR
+        C1["HTML/Web<br/>Generate HTML<br/>CSS flexbox"]
+        C2["TSX/JSX<br/>Generate React<br/>Components"]
     end
 
     NimDSL --> Tree
@@ -99,7 +121,8 @@ flowchart TB
     Calc --> R1
     Calc --> R2
     Calc --> R3
-    Calc --> R4
+    Calc --> C1
+    Calc --> C2
 ```
 
 ## System Architecture
@@ -108,27 +131,18 @@ flowchart TB
 
 ```mermaid
 flowchart TB
-    subgraph L1["Application Layer"]
-        App["Your Business Logic<br/>(Nim/Rust/C/JS/Lua)"]
-    end
+    L1["<b>APPLICATION LAYER</b><br/>Your Business Logic<br/>(Nim/Rust/C/JS/Lua)"]
+    L2["<b>INTERFACE LAYER</b><br/>Language Bindings & Macros<br/>(Nim DSL, JSX Runtime)"]
+    L3["<b>CORE LAYER</b><br/>Component Model, State, Layout<br/>(C ABI)"]
+    L4["<b>OUTPUT LAYER</b><br/>Renderers & Transpilers<br/>(C ABI)"]
+    L5A["<b>RENDERING BACKENDS</b><br/>SDL3 | Terminal | Framebuffer"]
+    L5B["<b>CODEGENS</b><br/>HTML/Web | TSX | JSX"]
 
-    subgraph L2["Interface Layer"]
-        Bindings["Language Bindings & Macros<br/>(Nim DSL, JSX Runtime)"]
-    end
-
-    subgraph L3["Core Layer"]
-        Core2["Component Model, State, Layout<br/>(C ABI)"]
-    end
-
-    subgraph L4["Renderer Abstraction"]
-        Primitives["Primitive Drawing Commands<br/>(C ABI)"]
-    end
-
-    subgraph L5["Platform Backends"]
-        Platforms["SDL3 | Terminal | Framebuffer | Web"]
-    end
-
-    L1 --> L2 --> L3 --> L4 --> L5
+    L1 --> L2
+    L2 --> L3
+    L3 --> L4
+    L4 --> L5A
+    L4 --> L5B
 ```
 
 ### Critical Boundary
@@ -144,9 +158,9 @@ The **Core Layer** and **Renderer Abstraction** expose a pure C ABI. This allows
 flowchart TB
     subgraph Layout["LAYOUT COMPONENTS"]
         Container["Container (div)"]
-        Container --> Row["Row (←→)"]
-        Container --> Column["Column (↑↓)"]
-        Container --> Center["Center (⊕)"]
+        Container --> Row["Row (<->)"]
+        Container --> Column["Column (^v)"]
+        Container --> Center["Center (+)"]
     end
 
     subgraph Content["CONTENT COMPONENTS"]
@@ -169,47 +183,49 @@ flowchart TB
 
 ```
 kryon/
-├── ir/                          # IR Core (C)
-│   ├── ir_core.h               # Component types, structs
-│   ├── ir_builder.c            # Tree construction
-│   ├── ir_layout.c             # Flexbox layout
-│   └── ir_events.c             # Event handling
-│
-├── backends/
-│   ├── desktop/                # Desktop backends
-│   │   ├── sdl_backend.c       # SDL3 rendering
-│   │   └── ir_desktop_renderer.c
-│   └── web/                    # Web backend
-│       ├── html_generator.c    # HTML output
-│       ├── css_generator.c     # CSS output
-│       └── ir_web_renderer.c
-│
-├── bindings/
-│   ├── nim/                    # Nim frontend
-│   │   ├── kryon_dsl.nim       # DSL macros
-│   │   ├── runtime.nim         # Event handlers
-│   │   └── reactive_system.nim # State management
-│   └── typescript/             # TypeScript frontend
-│       └── src/
-│           ├── jsx-runtime.ts  # JSX transform
-│           ├── renderer.ts     # IRNode → C IR
-│           ├── ffi.ts          # Bun FFI bindings
-│           └── app.ts          # Entry point
-│
-├── examples/
-│   ├── nim/                    # Nim examples
-│   │   ├── hello_world.nim
-│   │   ├── button_demo.nim
-│   │   └── ...
-│   └── typescript/             # TypeScript examples
-│       ├── hello_world.tsx
-│       ├── button_demo.tsx
-│       └── ...
-│
-└── build/                      # Compiled libraries
-    ├── libkryon_ir.a
-    ├── libkryon_desktop.so
-    └── libkryon_web.so
++-- ir/                          # IR Core (C)
+|   +-- ir_core.h               # Component types, structs
+|   +-- ir_builder.c            # Tree construction
+|   +-- ir_layout.c             # Flexbox layout
+|   +-- ir_events.c             # Event handling
+|
++-- backends/
+|   +-- desktop/                # Desktop rendering backend
+|       +-- sdl_backend.c       # SDL3 rendering
+|       +-- ir_desktop_renderer.c
+|
++-- codegens/
+|   +-- web/                    # HTML/Web transpiler
+|       +-- html_generator.c    # HTML output
+|       +-- css_generator.c     # CSS output
+|       +-- ir_web_renderer.c
+|
++-- bindings/
+|   +-- nim/                    # Nim frontend
+|   |   +-- kryon_dsl.nim       # DSL macros
+|   |   +-- runtime.nim         # Event handlers
+|   |   +-- reactive_system.nim # State management
+|   +-- typescript/             # TypeScript frontend
+|       +-- src/
+|           +-- jsx-runtime.ts  # JSX transform
+|           +-- renderer.ts     # IRNode -> C IR
+|           +-- ffi.ts          # Bun FFI bindings
+|           +-- app.ts          # Entry point
+|
++-- examples/
+|   +-- nim/                    # Nim examples
+|   |   +-- hello_world.nim
+|   |   +-- button_demo.nim
+|   |   +-- ...
+|   +-- typescript/             # TypeScript examples
+|       +-- hello_world.tsx
+|       +-- button_demo.tsx
+|       +-- ...
+|
++-- build/                      # Compiled libraries
+    +-- libkryon_ir.a           # Core IR library
+    +-- libkryon_desktop.so     # SDL3 rendering backend
+    +-- libkryon_web.so         # HTML/Web codegen
 ```
 
 ## Running Examples
@@ -226,7 +242,7 @@ kryon/
 ./run_example.sh hello_world ts
 ./run_example.sh hello_world typescript sdl3
 
-# TypeScript + Web (generates HTML, starts server)
+# TypeScript + HTML/Web codegen (transpiles to HTML, starts server)
 ./run_example.sh hello_world ts web
 
 # By number (from example list)
@@ -256,96 +272,43 @@ All backends must implement a minimal set of primitive commands:
 *   `draw_line`
 *   `swap_buffers`
 
-## Frontend × Backend Matrix
+## Language Binding Compatibility
 
-```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '14px'}}}%%
-flowchart LR
-    subgraph Matrix["Compatibility Matrix"]
-        direction TB
+### Rendering Backends
 
-        subgraph Headers[" "]
-            direction LR
-            H1["SDL3"]
-            H2["Terminal"]
-            H3["Framebuffer"]
-            H4["Web"]
-        end
+| Binding    | SDL3 | Terminal | Framebuffer |
+|------------|:----:|:--------:|:-----------:|
+| Nim        | [x]  |   [x]    |     [x]     |
+| TypeScript | [x]  |   [x]    |     [~]     |
+| Lua        |  -   |    -     |      -      |
+| C          | [x]  |   [x]    |     [x]     |
 
-        subgraph NimRow["Nim"]
-            N1["✓"]
-            N2["✓"]
-            N3["✓"]
-            N4["✓"]
-        end
+### Codegens (Transpilers)
 
-        subgraph TSRow["TypeScript"]
-            T1["✓"]
-            T2["✓"]
-            T3["~"]
-            T4["✓"]
-        end
+| Binding    | HTML/Web | TSX | JSX |
+|------------|:--------:|:---:|:---:|
+| Nim        |   [x]    | [-] | [-] |
+| TypeScript |   [x]    | [-] | [-] |
+| Lua        |    -     |  -  |  -  |
+| C          |   [x]    | [-] | [-] |
 
-        subgraph LuaRow["Lua"]
-            L1["-"]
-            L2["-"]
-            L3["-"]
-            L4["-"]
-        end
+**Legend:** [x] = Supported, [~] = Partial, - = Planned, [-] = Not applicable
 
-        subgraph CRow["C"]
-            C1["✓"]
-            C2["✓"]
-            C3["✓"]
-            C4["✓"]
-        end
-    end
-```
-
-| Frontend   | SDL3 | Terminal | Framebuffer | Web |
-|------------|:----:|:--------:|:-----------:|:---:|
-| Nim        |  ✓   |    ✓     |      ✓      |  ✓  |
-| TypeScript |  ✓   |    ✓     |      ~      |  ✓  |
-| Lua        |  -   |    -     |      -      |  -  |
-| C          |  ✓   |    ✓     |      ✓      |  ✓  |
-
-**Legend:** ✓ = Supported, ~ = Partial, - = Planned
-
-## Backend Comparison
-
-```mermaid
-graph TB
-    subgraph SDL3["SDL3 Backend"]
-        SDL3_use["Use: Desktop apps, Games"]
-        SDL3_plat["Platform: Linux/macOS/Windows"]
-        SDL3_feat["Features: GPU accel, TTF fonts, Mouse/KB"]
-    end
-
-    subgraph Terminal["Terminal Backend"]
-        Term_use["Use: CLI tools, Remote/SSH"]
-        Term_plat["Platform: Any terminal"]
-        Term_feat["Features: TUI boxes, Unicode, ANSI color"]
-    end
-
-    subgraph Framebuffer["Framebuffer Backend"]
-        FB_use["Use: Embedded, Kiosk"]
-        FB_plat["Platform: Linux /dev/fb0, RPi"]
-        FB_feat["Features: Direct pixels, No X11, Minimal deps"]
-    end
-
-    subgraph Web["Web Backend"]
-        Web_use["Use: Browser apps, Dashboards"]
-        Web_plat["Platform: Any browser"]
-        Web_feat["Features: HTML gen, CSS flexbox, JS events"]
-    end
-```
+## Rendering Backends
 
 | Backend     | Use Case                | Platform              | Key Features                        |
 |-------------|-------------------------|-----------------------|-------------------------------------|
 | SDL3        | Desktop apps, Games     | Linux/macOS/Windows   | GPU accel, TTF fonts, Mouse/KB      |
 | Terminal    | CLI tools, Remote/SSH   | Any terminal          | TUI boxes, Unicode, ANSI color      |
 | Framebuffer | Embedded, Kiosk         | Linux /dev/fb0, RPi   | Direct pixels, No X11, Minimal deps |
-| Web         | Browser apps, Dashboards| Any browser           | HTML gen, CSS flexbox, JS events    |
+
+## Codegens (Transpilers)
+
+| Codegen     | Output Format           | Use Case              | Key Features                        |
+|-------------|-------------------------|-----------------------|-------------------------------------|
+| HTML/Web    | HTML/CSS/JS files       | Browser apps, Sites   | CSS flexbox, DOM events, Static gen |
+| TSX         | TypeScript/React code   | React apps            | Component transpilation, Type-safe  |
+| JSX         | JavaScript/React code   | React apps            | Component transpilation             |
 
 ## Frontend Overview
 
@@ -362,14 +325,15 @@ graph TB
 # List all examples
 ./run_example.sh
 
-# Frontend options: nim, ts (typescript), lua, c
-# Backend options: sdl3, terminal, framebuffer, web
+# Language binding options: nim, ts (typescript), lua, c
+# Rendering backend options: sdl3, terminal, framebuffer
+# Codegen options: web (HTML/CSS/JS transpiler)
 
 # Examples:
 ./run_example.sh hello_world              # nim + sdl3 (default)
 ./run_example.sh hello_world nim sdl3     # nim + sdl3 (explicit)
-./run_example.sh hello_world nim terminal # nim + terminal
+./run_example.sh hello_world nim terminal # nim + terminal rendering
 ./run_example.sh hello_world ts           # typescript + sdl3
-./run_example.sh hello_world ts web       # typescript + web (serves HTML)
-./run_example.sh hello_world ts terminal  # typescript + terminal
+./run_example.sh hello_world ts web       # typescript + HTML codegen (transpiles to browser)
+./run_example.sh hello_world ts terminal  # typescript + terminal rendering
 ```

@@ -14,13 +14,13 @@ This website showcases Kryon by being built with Kryon! It demonstrates:
 
 ```
 kryon-website/
-├── kryon.toml          # Project configuration
-├── index.js            # Main website file
-├── dist/               # Build output (generated)
-│   ├── index.html
-│   ├── styles.css
-│   └── app.js
-└── README.md           # This file
++-- kryon.toml          # Project configuration
++-- index.js            # Main website file
++-- dist/               # Build output (generated)
+|   +-- index.html
+|   +-- styles.css
+|   +-- app.js
++-- README.md           # This file
 ```
 
 ## Requirements

@@ -14,9 +14,9 @@
 
 ## Overview
 
-The Kryon IR (Intermediate Representation) pipeline provides a clean separation between frontends (Nim, Lua, C) and backends (SDL3, Terminal, Web). This architecture allows:
+The Kryon IR (Intermediate Representation) pipeline provides a clean separation between language bindings (Nim, Lua, C), the IR core, rendering backends (SDL3, Terminal), and codegens (HTML/Web, TSX, JSX). This architecture allows:
 
-- **Any frontend can target any backend** - Write UI in your preferred language
+- **Any language binding can target any backend or codegen** - Write UI in your preferred language
 - **Efficient binary format** - Fast loading and small file sizes
 - **Human-readable JSON format** - Debugging and inspection
 - **Modular and testable** - Each pipeline stage is independently verifiable
@@ -24,53 +24,62 @@ The Kryon IR (Intermediate Representation) pipeline provides a clean separation 
 ## Pipeline Architecture
 
 ```
-┌──────────────────────────────────────────────────────┐
-│ FRONTENDS (Language Bindings)                        │
-├──────────────────────────────────────────────────────┤
-│  Nim DSL → ir_builder API → .kir (JSON v2)          │
-│  Lua (future) → ir_builder API → .kir (JSON v2)     │
-│  C (future) → ir_builder API → .kir (JSON v2)       │
-└──────────────────────────────────────────────────────┘
-                      ↓
-┌──────────────────────────────────────────────────────┐
-│ IR COMPILATION LAYER (Required Step)                 │
-├──────────────────────────────────────────────────────┤
-│  .kir (JSON) ← Standard format from frontends        │
-│       ↓                                              │
-│  Format detection (ir_format_detect.c)              │
-│       ↓                                              │
-│  Validation (ir_validation.c)                       │
-│       ↓                                              │
-│  ir_read_json_v2_file() → IRComponent*              │
-│       ↓                                              │
-│  ir_write_binary_file() → .kirb                     │
-│       ↓                                              │
-│  .kirb (Binary v2.0) ← ONLY format backends read    │
-└──────────────────────────────────────────────────────┘
-                      ↓
-┌──────────────────────────────────────────────────────┐
-│ BACKENDS (Renderers) - ONLY READ .kirb               │
-├──────────────────────────────────────────────────────┤
-│  SDL3 → Loads .kirb ONLY → Renders desktop         │
-│  Terminal → Loads .kirb ONLY → Renders terminal    │
-│  Web → Loads .kirb ONLY → Generates HTML/CSS       │
-│                                                      │
-│  If given .kir: auto-compile to .kirb first         │
-└──────────────────────────────────────────────────────┘
++-------------------------------------------------------+
+| FRONTENDS (Language Bindings)                        |
++-------------------------------------------------------+
+|  Nim DSL -> ir_builder API -> .kir (JSON v2)          |
+|  Lua (future) -> ir_builder API -> .kir (JSON v2)     |
+|  C (future) -> ir_builder API -> .kir (JSON v2)       |
++-------------------------------------------------------+
+                      |
++-------------------------------------------------------+
+| IR COMPILATION LAYER (Required Step)                 |
++-------------------------------------------------------+
+|  .kir (JSON) <- Standard format from frontends        |
+|       |                                              |
+|  Format detection (ir_format_detect.c)              |
+|       |                                              |
+|  Validation (ir_validation.c)                       |
+|       |                                              |
+|  ir_read_json_v2_file() -> IRComponent*              |
+|       |                                              |
+|  ir_write_binary_file() -> .kirb                     |
+|       |                                              |
+|  .kirb (Binary v2.0) <- ONLY format backends read    |
++-------------------------------------------------------+
+                      |
++-------------------------------------------------------+
+| RENDERING BACKENDS - ONLY READ .kirb                 |
++-------------------------------------------------------+
+|  SDL3 -> Loads .kirb ONLY -> Renders desktop         |
+|  Terminal -> Loads .kirb ONLY -> Renders terminal    |
+|                                                      |
+|  If given .kir: auto-compile to .kirb first         |
++-------------------------------------------------------+
+                      |
++-------------------------------------------------------+
+| CODEGENS (Transpilers) - Generate source code       |
++-------------------------------------------------------+
+|  HTML/Web -> Loads .kirb ONLY -> Generates HTML/CSS  |
+|  TSX -> Loads .kirb ONLY -> Generates TypeScript     |
+|  JSX -> Loads .kirb ONLY -> Generates JavaScript     |
+|                                                      |
+|  If given .kir: auto-compile to .kirb first         |
++-------------------------------------------------------+
 ```
 
 ### Key Principles
 
 1. **Frontends ALWAYS output .kir (JSON)** - Human-readable, standardized format
 2. **Backends ONLY read .kirb (binary)** - Efficient, optimized format
-3. **IR layer handles conversion** - Automatic .kir → .kirb compilation
+3. **IR layer handles conversion** - Automatic .kir -> .kirb compilation
 4. **.kir format is IDENTICAL across all frontends** - No frontend-specific extensions
 
 ## Modular Design
 
 The IR pipeline is designed as **5 independent modules**, each with clear interfaces and independent testability:
 
-### Module 1: Frontend Module (Source → .kir)
+### Module 1: Frontend Module (Source -> .kir)
 
 **Purpose:** Convert frontend DSL/code to standardized .kir JSON format
 
@@ -90,7 +99,7 @@ The IR pipeline is designed as **5 independent modules**, each with clear interf
 - Verify .kir output is valid JSON
 - Verify all properties are serialized
 
-### Module 2: Serialization Module (.kir → in-memory IR)
+### Module 2: Serialization Module (.kir -> in-memory IR)
 
 **Purpose:** Deserialize JSON IR into memory structures
 
@@ -105,7 +114,7 @@ The IR pipeline is designed as **5 independent modules**, each with clear interf
 - `ir_read_json_v2_file_with_manifest()` - Load JSON IR with reactive manifest
 
 **Testing:**
-- Roundtrip tests: .kir → IR → .kir (verify equality)
+- Roundtrip tests: .kir -> IR -> .kir (verify equality)
 - Malformed JSON handling
 - Large file handling
 - Unicode/special character handling
@@ -131,7 +140,7 @@ The IR pipeline is designed as **5 independent modules**, each with clear interf
 - Invalid IR trees (should fail with specific errors)
 - Edge cases (empty trees, deep nesting, etc.)
 
-### Module 4: Binary Compilation Module (in-memory IR → .kirb)
+### Module 4: Binary Compilation Module (in-memory IR -> .kirb)
 
 **Purpose:** Serialize IR to efficient binary format
 
@@ -148,29 +157,29 @@ The IR pipeline is designed as **5 independent modules**, each with clear interf
 - `ir_read_binary_file_with_manifest()` - Load binary IR with manifest
 
 **Binary Format Advantages:**
-- 5-10× smaller file size vs JSON
+- 5-10x smaller file size vs JSON
 - Faster parsing (no text processing)
 - Direct memory layout
 - Checksum verification
 
 **Testing:**
-- Roundtrip tests: IR → .kirb → IR (verify equality)
+- Roundtrip tests: IR -> .kirb -> IR (verify equality)
 - File corruption detection
 - Version compatibility
 - Size/performance benchmarks
 
-### Module 5: Backend Loading Module (.kirb → rendering)
+### Module 5: Output Module (.kirb -> rendering/transpilation)
 
-**Purpose:** Load binary IR and render UI
+**Purpose:** Load binary IR and either render UI or transpile to source code
 
 **Input:** `.kirb` file
-**Output:** Rendered UI (SDL3/Terminal/Web)
-**Interface:** Backend-specific (e.g., `desktop_ir_renderer_render_frame()`)
+**Output:** Rendered UI (SDL3/Terminal) OR Generated code (HTML/Web, TSX, JSX)
+**Interface:** Backend-specific (e.g., `desktop_ir_renderer_render_frame()`) or codegen-specific
 
 **Implementation:**
-- `backends/desktop/ir_desktop_renderer.c` - SDL3 backend
-- `renderers/terminal/terminal_backend.c` - Terminal backend
-- `backends/web/ir_web_renderer.c` - Web backend (incomplete)
+- `backends/desktop/ir_desktop_renderer.c` - SDL3 rendering backend
+- `renderers/terminal/terminal_backend.c` - Terminal rendering backend
+- `codegens/web/ir_web_renderer.c` - HTML/Web codegen (transpiler)
 
 **Core Functions:**
 - `ir_read_binary_file()` - Load .kirb file
@@ -249,9 +258,9 @@ All frontends MUST output standardized .kir (JSON v2) format:
 let serializeTarget = getEnv("KRYON_SERIALIZE_IR")
 if serializeTarget != "":
   if ir_write_json_v2_file_with_manifest(root, manifest, cstring(serializeTarget)):
-    echo "✓ IR serialized successfully"
+    echo "[x] IR serialized successfully"
   else:
-    echo "✗ Failed to serialize IR"
+    echo "[X] Failed to serialize IR"
     quit(1)
 ```
 
@@ -301,7 +310,7 @@ If a backend receives .kir instead of .kirb, it should auto-compile:
 IRFormat format = ir_detect_format(filename);
 
 if (format == IR_FORMAT_JSON) {
-    // Auto-compile .kir → .kirb
+    // Auto-compile .kir -> .kirb
     IRComponent* root = ir_read_json_v2_file(filename);
 
     // Generate .kirb filename
@@ -323,7 +332,7 @@ else if (format == IR_FORMAT_BINARY) {
 ### Backend Requirements
 
 1. **Only load .kirb** - Binary format is mandatory for backends
-2. **Auto-compile if needed** - Convert .kir → .kirb if given JSON
+2. **Auto-compile if needed** - Convert .kir -> .kirb if given JSON
 3. **Use format detection** - Call `ir_detect_format()` to identify file type
 4. **Validate before rendering** - Call `ir_validate_component()` on loaded IR
 5. **Clean error messages** - Report clear errors for invalid IR
@@ -413,10 +422,10 @@ void test_backend_loads_kirb() {
 ```c
 // tests/integration/test_full_pipeline.c
 void test_end_to_end_pipeline() {
-    // 1. Frontend: Nim → .kir
+    // 1. Frontend: Nim -> .kir
     system("nim c -r app.nim");  // Outputs app.kir
 
-    // 2. Conversion: .kir → .kirb
+    // 2. Conversion: .kir -> .kirb
     IRComponent* root = ir_read_json_v2_file("app.kir");
     ir_write_binary_file(root, "app.kirb");
 
@@ -455,7 +464,7 @@ test-integration:
 	./tests/integration/test_full_pipeline
 
 test-all: test-serialization test-validation test-conversion test-backend test-integration
-	@echo "✅ All tests passed!"
+	@echo "[OK] All tests passed!"
 ```
 
 ## CLI Usage
@@ -465,11 +474,11 @@ test-all: test-serialization test-validation test-conversion test-backend test-i
 ```bash
 # Nim frontend (outputs .kir by default)
 kryon compile app.nim
-# → app.kir
+# -> app.kir
 
 # With explicit format
 kryon compile app.nim --format=json
-# → app.kir
+# -> app.kir
 ```
 
 ### Convert .kir to .kirb
@@ -477,12 +486,12 @@ kryon compile app.nim --format=json
 ```bash
 # Manual conversion
 kryon convert app.kir app.kirb
-# → Converts JSON to binary
+# -> Converts JSON to binary
 
 # Check file sizes
 ls -lh app.kir app.kirb
 # app.kir:  125K
-# app.kirb:  15K  (5-10× smaller)
+# app.kirb:  15K  (5-10x smaller)
 ```
 
 ### Compile Directly to .kirb
@@ -490,11 +499,11 @@ ls -lh app.kir app.kirb
 ```bash
 # Compile to binary in one step
 kryon compile app.nim --format=binary
-# → app.kirb
+# -> app.kirb
 
 # Or use explicit extension
 kryon compile app.nim --output=app.kirb
-# → app.kirb
+# -> app.kirb
 ```
 
 ### Validate IR Files
@@ -512,15 +521,15 @@ kryon validate app.kirb
 ```bash
 # Run from source (auto-compiles)
 kryon run app.nim
-# → Compiles to .kir → .kirb → Runs
+# -> Compiles to .kir -> .kirb -> Runs
 
 # Run from .kir (auto-compiles to .kirb)
 kryon run app.kir
-# → Converts to .kirb → Runs
+# -> Converts to .kirb -> Runs
 
 # Run from .kirb (direct load)
 kryon run app.kirb
-# → Runs directly
+# -> Runs directly
 ```
 
 ## Best Practices
@@ -529,7 +538,7 @@ kryon run app.kirb
 2. **Convert to .kirb for production** - Binary format for deployment
 3. **Test each module independently** - Use modular test structure
 4. **Validate before deploying** - Run `kryon validate` on all IR files
-5. **Use auto-compilation** - Let the IR layer handle .kir → .kirb conversion
+5. **Use auto-compilation** - Let the IR layer handle .kir -> .kirb conversion
 6. **Keep .kir for debugging** - JSON format is easier to inspect
 7. **Version your IR files** - Track IR format changes in version control
 
@@ -558,7 +567,7 @@ kryon convert app.kir app.kirb
 
 ### Roundtrip test fails
 
-**Problem:** .kir → IR → .kir produces different output
+**Problem:** .kir -> IR -> .kir produces different output
 
 **Solution:** Check property serialization, ensure all fields are preserved
 
@@ -566,11 +575,11 @@ kryon convert app.kir app.kirb
 
 The Kryon IR pipeline is a **modular, testable architecture** that enables:
 
-✅ **Any frontend → .kir (JSON)** - Standardized, human-readable format
-✅ **IR layer → .kirb (binary)** - Automatic optimization
-✅ **Backends only read .kirb** - Fast, efficient loading
-✅ **5 independent modules** - Frontend, Serialization, Validation, Binary Compilation, Backend
-✅ **Comprehensive testing** - Unit tests, integration tests, roundtrip tests
-✅ **Clear CLI tools** - compile, convert, validate, run
+[OK] **Any frontend -> .kir (JSON)** - Standardized, human-readable format
+[OK] **IR layer -> .kirb (binary)** - Automatic optimization
+[OK] **Backends only read .kirb** - Fast, efficient loading
+[OK] **5 independent modules** - Frontend, Serialization, Validation, Binary Compilation, Backend
+[OK] **Comprehensive testing** - Unit tests, integration tests, roundtrip tests
+[OK] **Clear CLI tools** - compile, convert, validate, run
 
 **One IR format, multiple frontends, multiple backends!**

@@ -6,14 +6,14 @@ This directory contains example applications demonstrating Kryon's features.
 
 ```
 examples/
-├── kry/           # Source files (tracked in git)
-│   ├── hello_world.kry
-│   ├── button_demo.kry
-│   ├── counters_demo.kry
-│   └── ...
-├── nim/           # Generated Nim code (NOT tracked in git)
-├── lua/           # Generated Lua code (NOT tracked in git)
-└── README.md
++--- kry/           # Source files (tracked in git)
+|   +--- hello_world.kry
+|   +--- button_demo.kry
+|   +--- counters_demo.kry
+|   +--- ...
++--- nim/           # Generated Nim code (NOT tracked in git)
++--- lua/           # Generated Lua code (NOT tracked in git)
++--- README.md
 ```
 
 ## Source of Truth
@@ -66,12 +66,12 @@ KRYON_RENDERER=terminal ./run_example.sh button_demo
 The generation pipeline ensures perfect round-trip transpilation:
 
 ```
-.kry → .kir (static) → .nim → .kir (round-trip) → validate
+.kry -> .kir (static) -> .nim -> .kir (round-trip) -> validate
 ```
 
-1. `.kry → .kir (static)` - Parse .kry to JSON IR with `--preserve-static`
-2. `.kir → .nim` - Generate idiomatic Nim DSL code
-3. `.nim → .kir` - Compile generated Nim back to IR (round-trip test)
+1. `.kry -> .kir (static)` - Parse .kry to JSON IR with `--preserve-static`
+2. `.kir -> .nim` - Generate idiomatic Nim DSL code
+3. `.nim -> .kir` - Compile generated Nim back to IR (round-trip test)
 4. **Validation** - Compare original and round-trip `.kir` files
 
 If validation fails, it indicates a transpilation bug.

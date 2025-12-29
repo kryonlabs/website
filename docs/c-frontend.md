@@ -7,8 +7,8 @@ The Kryon C frontend allows you to build cross-platform UIs using a simple C API
 ### Architecture
 
 ```
-.kry files → .kir (JSON IR) → codegen → C source → compile → executable → .kir output
-                                                        ↓
+.kry files -> .kir (JSON IR) -> codegen -> C source -> compile -> executable -> .kir output
+                                                        |
                                                    SDL3/Terminal/Web renderer
 ```
 
@@ -317,14 +317,14 @@ int main(void) {
 
 ### Manual C Development
 ```
-Write C → Compile → Run → Generate .kir → Render
+Write C -> Compile -> Run -> Generate .kir -> Render
 ```
 **Pros**: Direct control, familiar C tooling
 **Cons**: Verbose, manual tree management
 
 ### Code Generation from .kry
 ```
-Write .kry → Compile to .kir → Codegen C → Compile → Run → .kir
+Write .kry -> Compile to .kir -> Codegen C -> Compile -> Run -> .kir
 ```
 **Pros**: Concise syntax, automatic validation, version control friendly
 **Cons**: Extra step (transparent with scripts)

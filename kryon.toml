@@ -5,19 +5,22 @@ author = "Kryon Labs"
 description = "Official Kryon website built with Kryon"
 
 [build]
+entry = "index.html"
 targets = ["web"]
+frontend = "html"
 output_dir = "build"
-frontend = "tsx"
+# web target generates static HTML (codegen, not binary)
 
 [[build.pages]]
-file = "index.tsx"
-path = "/"
+name = "home"
+route = "/"
+source = "index.html"
 
 # Auto-generate docs pages from markdown files
 [build.docs]
 enabled = true
 directory = "docs"
-template = "docs.tsx"
+frontend = "markdown"
 base_path = "/docs"
 index_file = "getting-started.md"
 
@@ -25,12 +28,10 @@ index_file = "getting-started.md"
 enabled = true
 minify_css = true
 minify_js = true
-
-# Plugin dependencies
-[plugins]
-markdown = { path = "../kryon-plugin-markdown" }
+tree_shake = true
 
 [web]
+renderer = "static"
 generate_separate_files = true
 include_js_runtime = false
 minify_css = true
@@ -39,8 +40,9 @@ minify_js = true
 [dev]
 hot_reload = true
 port = 3000
-watch_paths = ["index.tsx", "docs.tsx", "docs/**/*.md", "src/**/*.tsx"]
+auto_open = true
+watch_paths = ["index.html", "kryon.css", "docs/**/*.md"]
 
-[metadata]
-created = "2025-11-30"
-kryon_version = "1.2.0"
+# Plugin dependencies
+[plugins]
+markdown = { path = "../kryon-plugin-markdown" }

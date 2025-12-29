@@ -57,13 +57,13 @@ luajit -l kryon.ffi -e "print('FFI loaded successfully!')"
 
 ```
 Lua Application Code
-        ↓
+        |
     Lua DSL Layer (kryon/dsl.lua)
-        ↓
+        |
    LuaJIT FFI (kryon/ffi.lua)
-        ↓  [zero overhead]
+        |  [zero overhead]
    C IR Core (libkryon_ir.so)
-        ↓
+        |
   Backends (SDL3/Terminal/Web)
 ```
 
@@ -73,11 +73,11 @@ Lua Application Code
 
 ```
 kryon/
-├── init.lua         # Main entry point
-├── ffi.lua          # LuaJIT FFI bindings to C
-├── runtime.lua      # Event handlers, lifecycle
-├── reactive.lua     # Reactive state system
-└── dsl.lua          # Component builders
++--- init.lua         # Main entry point
++--- ffi.lua          # LuaJIT FFI bindings to C
++--- runtime.lua      # Event handlers, lifecycle
++--- reactive.lua     # Reactive state system
++--- dsl.lua          # Component builders
 ```
 
 ## API Reference
@@ -437,7 +437,7 @@ luajit counter_demo.lua
 
 ## Integration with Game Engines
 
-### LÖVE (Love2D)
+### LOVE (Love2D)
 
 ```lua
 local kryon = require("kryon")

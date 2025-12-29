@@ -16,12 +16,12 @@ Plugins register component renderers with Kryon's IR (Intermediate Representatio
 
 ```
 Your App (.kry/.nim/.tsx)
-         │
-         ▼
+         |
+         v
     Kryon IR Core
-         │
-    ┌────┴────┐
-    ▼         ▼
+         |
+    +-----+----+
+    v         v
 Built-in   Plugin
 Components Components
 ```
@@ -110,13 +110,13 @@ Plugins are shared libraries that implement Kryon's plugin API.
 
 ```
 my-plugin/
-├── src/
-│   ├── my_plugin.c      # Plugin registration
-│   └── my_renderer.c    # Component renderer
-├── include/
-│   └── my_plugin.h      # Public API
-├── Makefile
-└── README.md
++--- src/
+|   +--- my_plugin.c      # Plugin registration
+|   +--- my_renderer.c    # Component renderer
++--- include/
+|   +--- my_plugin.h      # Public API
++--- Makefile
++--- README.md
 ```
 
 ### Registration
