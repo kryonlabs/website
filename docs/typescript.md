@@ -1,6 +1,6 @@
 # Kryon TypeScript Bindings
 
-TypeScript/JSX bindings for the Kryon UI Framework using Bun's native FFI. Write UIs with familiar React-like JSX syntax and target multiple rendering backends (SDL3, Terminal) or transpile to HTML.
+TypeScript/JSX bindings for the Kryon UI Framework using Bun's native FFI. Write UIs with familiar React-like JSX syntax and target multiple rendering backends (SDL3, Raylib, Terminal) or transpile to HTML.
 
 ## Why TypeScript?
 
@@ -8,7 +8,8 @@ TypeScript/JSX bindings for the Kryon UI Framework using Bun's native FFI. Write
 - **Type safety** - Full TypeScript support with autocomplete
 - **Fast runtime** - Bun's native FFI for C library calls
 - **Hot reload** - Quick iteration during development
-- **Multiple targets** - SDL3 desktop, Terminal UI, or Web (HTML)
+- **Multiple targets** - SDL3/Raylib desktop, Terminal UI, or Web (HTML)
+- **React hooks** - Full support: useState, useEffect, useCallback, useMemo, useReducer
 
 ## Requirements
 
@@ -95,6 +96,149 @@ Layout components also support:
 - `gap` - Space between children
 - `justify` - Main axis alignment (start, center, end, space-between, space-around, space-evenly)
 - `align` - Cross axis alignment (start, center, end)
+
+## React Hooks
+
+Kryon TypeScript supports full React hooks for reactive state management and side effects.
+
+### useState
+
+Manage component state with automatic type inference from initial values.
+
+```tsx
+import { useState } from 'kryon';
+
+function Counter() {
+  // Type inferred as number
+  const [count, setCount] = useState(0);
+
+  return (
+    <column gap={10}>
+      <text content={`Count: ${count}`} />
+      <button title="Increment" onClick={() => setCount(count + 1)} />
+    </column>
+  );
+}
+```
+
+**Type Inference:** The type is automatically inferred from the initial value (`0` → `number`, `""` → `string`, `[]` → `array`).
+
+### useEffect
+
+Run side effects like data fetching, subscriptions, or DOM manipulation.
+
+```tsx
+import { useEffect, useState } from 'kryon';
+
+function Timer() {
+  const [seconds, setSeconds] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => setSeconds(s => s + 1), 1000);
+    return () => clearInterval(interval);
+  }, []); // Empty dependency array = run once on mount
+
+  return <text content={`Time: ${seconds}s`} />;
+}
+```
+
+### useCallback
+
+Memoize callback functions to prevent unnecessary re-renders.
+
+```tsx
+import { useState, useCallback } from 'kryon';
+
+function Form() {
+  const [value, setValue] = useState('');
+
+  const handleSubmit = useCallback(() => {
+    console.log('Submitted:', value);
+  }, [value]); // Only recreated when `value` changes
+
+  return (
+    <column gap={10}>
+      <input value={value} onChange={setValue} />
+      <button title="Submit" onClick={handleSubmit} />
+    </column>
+  );
+}
+```
+
+### useMemo
+
+Memoize expensive computations.
+
+```tsx
+import { useState, useMemo } from 'kryon';
+
+function ExpensiveList({ items }: { items: number[] }) {
+  const [filter, setFilter] = useState('');
+
+  const filteredItems = useMemo(() => {
+    console.log('Filtering items...');
+    return items.filter(n => n.toString().includes(filter));
+  }, [items, filter]); // Only recompute when items or filter changes
+
+  return (
+    <column gap={5}>
+      <input value={filter} onChange={setFilter} placeholder="Filter..." />
+      {filteredItems.map(n => <text content={n.toString()} />)}
+    </column>
+  );
+}
+```
+
+### useReducer
+
+Manage complex state logic with a reducer function.
+
+```tsx
+import { useReducer } from 'kryon';
+
+type State = { count: number; step: number };
+type Action = { type: 'increment' } | { type: 'decrement' } | { type: 'setStep'; step: number };
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case 'increment': return { ...state, count: state.count + state.step };
+    case 'decrement': return { ...state, count: state.count - state.step };
+    case 'setStep': return { ...state, step: action.step };
+  }
+}
+
+function Counter() {
+  const [state, dispatch] = useReducer(reducer, { count: 0, step: 1 });
+
+  return (
+    <column gap={10}>
+      <text content={`Count: ${state.count}`} />
+      <text content={`Step: ${state.step}`} />
+      <row gap={10}>
+        <button title="-" onClick={() => dispatch({ type: 'decrement' })} />
+        <button title="Step 1" onClick={() => dispatch({ type: 'setStep', step: 1 })} />
+        <button title="Step 5" onClick={() => dispatch({ type: 'setStep', step: 5 })} />
+        <button title="+" onClick={() => dispatch({ type: 'increment' })} />
+      </row>
+    </column>
+  );
+}
+```
+
+### Type Inference
+
+All hooks support automatic type inference from initial values:
+
+```tsx
+// Types are inferred: number, string, string[], boolean
+const [count, setCount] = useState(0);
+const [name, setName] = useState('');
+const [items, setItems] = useState([]);
+const [isActive, setIsActive] = useState(false);
+
+// Explicit type also works
+const [data, setData] = useState<{ id: number; value: string } | null>(null);
+```
 
 ## Complete Examples
 

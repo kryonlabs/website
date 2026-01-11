@@ -13,7 +13,7 @@ Kryon is a multi-platform UI framework designed with a clean separation between 
 
 **Language Bindings** → **KIR Pipeline** → **Rendering Backends + Codegens**
 
-- **Rendering Backends** (SDL3, Terminal): Use Kryon's renderer to draw UI directly
+- **Rendering Backends** (SDL3, Raylib, Terminal): Use Kryon's renderer to draw UI directly
 - **Codegens/Transpilers** (HTML/Web, TSX, JSX): Generate code that browsers/tools render
 
 ## File Formats
@@ -54,6 +54,7 @@ flowchart TB
     subgraph Backends["RENDERING BACKENDS (Use Kryon's Renderer)"]
         direction LR
         SDL3["SDL3<br/>* GPU accel<br/>* TTF fonts<br/>* Desktop"]
+        Raylib["Raylib<br/>* 3D support<br/>* Game-focused<br/>* Desktop"]
         Terminal["Terminal<br/>* libtickit<br/>* Unicode<br/>* SSH-able"]
         Framebuffer["Framebuffer<br/>* /dev/fb0<br/>* Embedded<br/>* No X11"]
     end
@@ -71,13 +72,15 @@ flowchart TB
     C --> Core
 
     Core --> SDL3
+    Core --> Raylib
     Core --> Terminal
     Core --> Framebuffer
     Core --> HTML
     Core --> TSX
     Core --> JSX
 
-    SDL3 --> Desktop["Desktop Window<br/>(Linux/macOS/Windows)"]
+    SDL3 --> DesktopSDL3["Desktop Window (SDL3)<br/>(Linux/macOS/Windows)"]
+    Raylib --> DesktopRaylib["Desktop Window (Raylib)<br/>(Linux/macOS/Windows)"]
     Terminal --> Term["Terminal Emulator<br/>(xterm/konsole/SSH)"]
     Framebuffer --> Embedded["Embedded Display<br/>(RPi/MCU)"]
     HTML --> Browser["Web Browser<br/>(Chrome/Firefox/Safari)"]
@@ -276,12 +279,12 @@ All backends must implement a minimal set of primitive commands:
 
 ### Rendering Backends
 
-| Binding    | SDL3 | Terminal | Framebuffer |
-|------------|:----:|:--------:|:-----------:|
-| Nim        | [x]  |   [x]    |     [x]     |
-| TypeScript | [x]  |   [x]    |     [~]     |
-| Lua        |  -   |    -     |      -      |
-| C          | [x]  |   [x]    |     [x]     |
+| Binding    | SDL3 | Raylib | Terminal | Framebuffer |
+|------------|:----:|:------:|:--------:|:-----------:|
+| Nim        | [x]  |   [x]  |   [x]    |     [x]     |
+| TypeScript | [x]  |   [x]  |   [x]    |     [~]     |
+| Lua        | [x]  |   [x]  |   [x]    |     [x]     |
+| C          | [x]  |   [x]  |   [x]    |     [x]     |
 
 ### Codegens (Transpilers)
 
@@ -289,7 +292,7 @@ All backends must implement a minimal set of primitive commands:
 |------------|:--------:|:---:|:---:|
 | Nim        |   [x]    | [-] | [-] |
 | TypeScript |   [x]    | [-] | [-] |
-| Lua        |    -     |  -  |  -  |
+| Lua        |   [x]    |  -  |  -  |
 | C          |   [x]    | [-] | [-] |
 
 **Legend:** [x] = Supported, [~] = Partial, - = Planned, [-] = Not applicable
@@ -298,7 +301,8 @@ All backends must implement a minimal set of primitive commands:
 
 | Backend     | Use Case                | Platform              | Key Features                        |
 |-------------|-------------------------|-----------------------|-------------------------------------|
-| SDL3        | Desktop apps, Games     | Linux/macOS/Windows   | GPU accel, TTF fonts, Mouse/KB      |
+| SDL3        | Desktop apps, Tools     | Linux/macOS/Windows   | GPU accel, TTF fonts, Mouse/KB      |
+| Raylib      | Games, 3D apps          | Linux/macOS/Windows   | 3D support, Simple API, Game-focused |
 | Terminal    | CLI tools, Remote/SSH   | Any terminal          | TUI boxes, Unicode, ANSI color      |
 | Framebuffer | Embedded, Kiosk         | Linux /dev/fb0, RPi   | Direct pixels, No X11, Minimal deps |
 
@@ -316,7 +320,7 @@ All backends must implement a minimal set of primitive commands:
 |------------|----------------------|-----------------|-------------------------------|
 | Nim        | DSL macros           | Compiled native | Performance, Desktop, Embedded|
 | TypeScript | JSX syntax           | Bun + FFI       | Web devs, Rapid prototyping   |
-| Lua        | Table-based (planned)| Lua VM          | Scripting, Hot-reload, Modding|
+| Lua        | Table-based          | Lua VM          | Scripting, Hot-reload, Modding, Full platform support |
 | C          | Direct API calls     | Compiled native | Max control, Library integration |
 
 ## Quick Reference
@@ -326,12 +330,13 @@ All backends must implement a minimal set of primitive commands:
 ./run_example.sh
 
 # Language binding options: nim, ts (typescript), lua, c
-# Rendering backend options: sdl3, terminal, framebuffer
+# Rendering backend options: sdl3, raylib, terminal, framebuffer
 # Codegen options: web (HTML/CSS/JS transpiler)
 
 # Examples:
 ./run_example.sh hello_world              # nim + sdl3 (default)
 ./run_example.sh hello_world nim sdl3     # nim + sdl3 (explicit)
+./run_example.sh hello_world nim raylib   # nim + raylib rendering
 ./run_example.sh hello_world nim terminal # nim + terminal rendering
 ./run_example.sh hello_world ts           # typescript + sdl3
 ./run_example.sh hello_world ts web       # typescript + HTML codegen (transpiles to browser)

@@ -17,10 +17,12 @@ Codegens:
 | Codegen  | Output Format        | Use Case              | Status      |
 |----------|---------------------|-----------------------|-------------|
 | HTML/Web | HTML/CSS/JS files   | Browser apps, Sites   | Production  |
-| TSX      | TypeScript/React    | React apps            | Planned     |
-| JSX      | JavaScript/React    | React apps            | Planned     |
-| Lua      | Lua code            | Lua frameworks        | Planned     |
-| C        | C code              | Native integration    | Planned     |
+| TSX      | TypeScript/React    | React apps            | Production  |
+| Lua      | Lua code            | Lua frameworks        | Production  |
+| Nim      | Nim DSL             | Nim applications      | Production  |
+| Kry      | Kry DSL             | Roundtrip conversion  | Production  |
+| C        | C code              | Native integration    | Partial     |
+| Markdown | Markdown            | Documentation         | Production  |
 
 ## HTML/Web Codegen
 
@@ -211,71 +213,154 @@ module.exports = {
 }
 ```
 
-## TSX Codegen (Planned)
+## TSX Codegen
 
 Generate TypeScript React components from Kryon IR.
 
-### Planned Usage
+### Usage
 
 ```bash
-kryon transpile app.kir --target tsx --output components/
+kryon codegen tsx app.kir app.tsx
 ```
 
-### Planned Output
+### Example
 
-**Input (Kryon IR):**
-```json
-{
-  "type": "CONTAINER",
-  "style": {
-    "width": "200px",
-    "backgroundColor": "#191970"
-  },
-  "children": [
-    {
-      "type": "TEXT",
-      "text": "Hello"
-    }
-  ]
-}
-```
+**Input (app.kir):** KIR component tree
 
-**Output (App.tsx):**
+**Output (app.tsx):**
 ```tsx
-import React from 'react'
+import { kryonApp } from "kryon";
 
-export const App: React.FC = () => {
-  return (
-    <div style={{
-      width: '200px',
-      backgroundColor: '#191970',
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
-      <span>Hello</span>
-    </div>
-  )
+export default kryonApp({
+  title: "App",
+  width: 800,
+  height: 600,
+  render: () => {
+    return (
+      <Column gap={20}>
+        <Text text="Hello World" color="#ffffff" />
+        <Button text="Click Me" onClick={() => console.log("clicked")} />
+      </Column>
+    );
+  }
+});
+```
+
+## Lua Codegen
+
+Generate Lua code with Kryon DSL bindings.
+
+```bash
+kryon codegen lua app.kir app.lua
+```
+
+### Example Output
+
+```lua
+local UI = require("kryon.dsl")
+local Reactive = require("kryon.reactive")
+
+local root = UI.Column {
+  gap = 20,
+  UI.Text { text = "Hello World", color = "#ffffff" },
+  UI.Button { text = "Click Me" }
+}
+
+return { root = root }
+```
+
+## Nim Codegen
+
+Generate Nim DSL code.
+
+```bash
+kryon codegen nim app.kir app.nim
+```
+
+### Example Output
+
+```nim
+import kryon_dsl
+
+let app = kryonApp:
+  Body:
+    Column:
+      gap = 20
+      Text:
+        text = "Hello World"
+        color = "#ffffff"
+      Button:
+        text = "Click Me"
+```
+
+## Kry Codegen
+
+Roundtrip conversion - convert KIR back to Kry DSL.
+
+```bash
+kryon codegen kry app.kir app.kry
+```
+
+### Example Output
+
+```kry
+App {
+  windowTitle = "App"
+  windowWidth = 800
+  windowHeight = 600
+
+  Column {
+    gap = 20
+
+    Text {
+      text = "Hello World"
+      color = "#ffffff"
+    }
+
+    Button {
+      text = "Click Me"
+    }
+  }
 }
 ```
 
-## JSX Codegen (Planned)
+## C Codegen
 
-Similar to TSX but outputs JavaScript instead of TypeScript.
-
-## Lua Codegen (Planned)
-
-Generate Lua code for Lua-based frameworks.
+Generate C code using Kryon C API.
 
 ```bash
-kryon transpile app.kir --target lua --output app.lua
+kryon codegen c app.kir app.c
 ```
 
-## C Codegen (Planned)
+### Example Output
 
-Generate C code using native UI libraries.
+```c
+#include "kryon.h"
+
+int main() {
+    kryon_init("App", 800, 600);
+
+    IRComponent* col = kryon_column();
+    kryon_set_gap(col, 20);
+
+    IRComponent* text = kryon_text("Hello World");
+    kryon_set_color(text, 255, 255, 255, 255);
+    kryon_add_child(col, text);
+
+    IRComponent* btn = kryon_button("Click Me");
+    kryon_add_child(col, btn);
+
+    kryon_run(col);
+    return 0;
+}
+```
+
+## Markdown Codegen
+
+Convert KIR to Markdown format.
 
 ```bash
-kryon transpile app.kir --target c --output app.c
+kryon codegen markdown app.kir app.md
 ```
 
 ## Implementation Guide

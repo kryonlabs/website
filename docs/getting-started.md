@@ -1,12 +1,8 @@
 # Getting Started with Kryon
 
-![Kryon Logo](https://via.placeholder.com/150)
-
-Kryon is a declarative UI framework with multiple language bindings (.kry, .nim, .tsx), rendering backends (SDL3, terminal), and codegens for transpilation (HTML/web, TSX, JSX).
+Kryon is a universal UI framework that compiles to multiple targets from a single source. Write once in TSX, Lua, Kry DSL, HTML, or Markdown - deploy to desktop (SDL3/Raylib), web (HTML/CSS/JS), terminal (TUI), Android, or embedded systems.
 
 ## Quick Start
-
-### Using `.kry` files (recommended for simple UIs)
 
 ```kry
 // hello.kry
@@ -30,44 +26,6 @@ App {
 ```
 
 Run with: `kryon run hello.kry`
-
-### Using Nim DSL (for reactive apps)
-
-```nim
-import kryon_dsl
-
-# Define event handler
-proc handleClick*() =
-  echo "Button clicked!"
-
-let app = kryonApp:
-  Header:
-    windowWidth = 800
-    windowHeight = 600
-    windowTitle = "Hello Kryon"
-
-  Body:
-    backgroundColor = "#2C3E50"
-
-    Center:
-      Column:
-        gap = 20
-
-        Text:
-          text = "Hello Kryon!"
-          fontSize = 32
-          color = "#ECF0F1"
-
-        Button:
-          text = "Click Me"
-          background = "#3498DB"
-          color = "#FFFFFF"
-          width = 120
-          height = 40
-          onClick = handleClick
-```
-
-Run with: `kryon run hello.nim`
 
 ## Installation
 
@@ -98,23 +56,39 @@ The `make install` command installs:
 ## CLI Commands
 
 ```bash
+# Create new project
+kryon new my-app                         # Creates project with kryon.toml
+
+# Build applications
+kryon build                              # Build from kryon.toml entry
+kryon build index.tsx                    # Build specific file
+
 # Run applications
-kryon run examples/kry/hello_world.kry   # Run .kry file
-kryon run examples/nim/button_demo.nim   # Run Nim app
-kryon run app.kir                        # Run pre-compiled IR
+kryon run                                # Build + start dev server
+kryon run app.kir                        # Run pre-compiled KIR
 
-# Parse .kry to .kir (JSON IR)
-kryon parse hello.kry                    # Outputs hello.kir
+# Compile to KIR only
+kryon compile index.tsx                  # Outputs .kryon_cache/index.kir
+kryon compile index.tsx --output=app.kir # Custom output path
 
-# Inspect IR files
-kryon tree app.kir                       # Show component tree
-kryon inspect-detailed app.kir           # Full analysis
+# Generate code from KIR
+kryon codegen tsx app.kir app.tsx        # KIR → TypeScript
+kryon codegen lua app.kir app.lua        # KIR → Lua
+kryon codegen nim app.kir app.nim        # KIR → Nim
+kryon codegen kry app.kir app.kry        # KIR → Kry DSL
 
-# Development mode with hot reload
-kryon dev examples/nim/habits.nim
+# Inspect KIR files
+kryon inspect app.kir                    # Show component tree
 
-# Transpile to HTML/Web (codegen)
-kryon build --target web
+# Compare KIR files
+kryon diff old.kir new.kir               # Show differences
+
+# Check configuration
+kryon config show                        # Show kryon.toml settings
+kryon config validate                    # Validate configuration
+
+# System health check
+kryon doctor                             # Check dependencies
 ```
 
 ## Rendering Backends
@@ -122,13 +96,24 @@ kryon build --target web
 Rendering backends use Kryon's renderer to draw UI directly:
 
 - **SDL3** - Modern cross-platform, hardware accelerated (default)
+- **Raylib** - Alternative rendering backend with 3D support
 - **Terminal** - Text-based UI using ANSI escape sequences
 
+### Runtime Renderer Selection
+
+Use the `--renderer` flag to select a rendering backend at runtime:
+
 ```bash
-# Set renderer via environment variable
-KRYON_RENDERER=sdl3 kryon run app.kry      # Default
-KRYON_RENDERER=terminal kryon run app.kry  # Terminal rendering
+# Runtime renderer selection (recommended)
+kryon run app.kry --renderer=sdl3     # SDL3 rendering (default)
+kryon run app.kry --renderer=raylib   # Raylib rendering
+kryon run app.kry --renderer=terminal # Terminal rendering
+
+# Or set via environment variable
+KRYON_RENDERER=raylib kryon run app.kry
 ```
+
+Renderer priority: `--renderer` flag > `kryon.toml` config > environment variable > default (SDL3)
 
 ## Codegens (Transpilers)
 
@@ -146,7 +131,7 @@ kryon build --target web app.kry
 ## Features
 
 - Declarative DSL syntax
-- Multiple rendering backends (SDL3, Terminal) and codegens (HTML/Web, TSX, JSX)
+- Multiple rendering backends (SDL3, Raylib, Terminal) and codegens (HTML/Web, TSX, JSX)
 - Event handlers (onClick, onChange, onSubmit, etc.)
 - Reactive state management
 - Flexible layout system (Column, Row, Center, Grid)
@@ -154,6 +139,33 @@ kryon build --target web app.kry
 - Styling (colors, borders, padding, fonts)
 - Text rendering with custom fonts
 - Mouse and keyboard input
+
+## Visual Testing with kryon-test
+
+Kryon includes **kryon-test**, a visual regression testing framework for automated screenshot-based testing.
+
+```bash
+# Build kryon-test
+cd ../kryon-test
+make
+
+# Run tests
+./build/kryon-test run configs/habits.yaml
+
+# Generate baseline screenshots
+./build/kryon-test baseline configs/habits.yaml
+
+# GUI test runner for interactive verification
+./build/kryon-test-gui configs/habits.yaml
+```
+
+Features:
+- YAML-based test configuration
+- Pixel-accurate screenshot comparison
+- Wireframe mode for reactive components
+- CLI and GUI test runners
+
+See the [Testing documentation](/docs/testing) for complete details.
 
 ## Components
 

@@ -8,7 +8,7 @@ Kryon's plugin system allows you to add new component types without modifying th
 
 - **Custom components** - New UI elements beyond the built-in set
 - **Custom renderers** - Specialized rendering for desktop, web, and other backends
-- **Domain-specific functionality** - Markdown rendering, canvas drawing, charts, etc.
+- **Domain-specific functionality** - Canvas drawing, flowcharts, etc.
 
 ## How Plugins Work
 
@@ -37,8 +37,8 @@ Declare plugin dependencies in your `kryon.toml`:
 name = "my-app"
 
 [plugins]
-markdown = { path = "../kryon-plugin-markdown" }
-canvas = { path = "../kryon-plugin-canvas" }
+flowchart = { path = "../kryon-flowchart" }
+canvas = { path = "../kryon-canvas" }
 ```
 
 ### In Your Code
@@ -47,42 +47,61 @@ Once declared, plugin components are available in your UI code:
 
 ```tsx
 // TSX
-<Markdown file="README.md" theme="dark" />
+<Flowchart nodes={nodes} edges={edges} />
 <Canvas width={400} height={300} />
 ```
 
 ```nim
 # Nim
-Markdown:
-  file = "README.md"
-  theme = "dark"
+Flowchart:
+  nodes = myNodes
+  edges = myEdges
 ```
 
 ## Official Plugins
 
-### Markdown Plugin
+Kryon includes four official plugins that extend the framework's capabilities:
 
-Rich markdown rendering with syntax highlighting, tables, and GitHub-flavored markdown support.
+| Plugin | Description | Languages |
+|--------|-------------|-----------|
+| **Flowchart** | Flowchart and node diagrams with Mermaid syntax | C |
+| **Syntax** | Syntax highlighting for code display | C |
+| **Canvas** | Love2D-inspired immediate mode drawing | Nim, Lua |
+| **Storage** | localStorage-like persistent storage | Nim, Lua, JS, TS |
 
-**Repository:** [github.com/kryonlabs/kryon-plugin-markdown](https://github.com/kryonlabs/kryon-plugin-markdown)
+### Flowchart Plugin
+
+Create interactive flowcharts and diagrams with nodes and edges.
+
+**Repository:** [github.com/kryonlabs/kryon-flowchart](https://github.com/kryonlabs/kryon-flowchart)
 
 **Features:**
-- CommonMark compliant
-- Syntax highlighting for code blocks
-- Tables, blockquotes, lists
-- Dark and light themes
+- Node-based diagram creation
+- Customizable node shapes (rectangle, diamond, circle, etc.)
+- Edge routing with labels
+- Interactive pan and zoom
 - Web and desktop rendering
 
 **Usage:**
 ```tsx
-<Markdown file="docs/guide.md" theme="dark" />
+<Flowchart
+  nodes={[
+    { id: "start", type: "circle", label: "Start" },
+    { id: "process", type: "rectangle", label: "Process" },
+    { id: "end", type: "circle", label: "End" }
+  ]}
+  edges={[
+    { from: "start", to: "process" },
+    { from: "process", to: "end" }
+  ]}
+/>
 ```
 
 ### Canvas Plugin
 
 2D drawing canvas for custom graphics, charts, and visualizations.
 
-**Repository:** [github.com/kryonlabs/kryon-plugin-canvas](https://github.com/kryonlabs/kryon-plugin-canvas)
+**Repository:** [github.com/kryonlabs/kryon-canvas](https://github.com/kryonlabs/kryon-canvas)
 
 **Features:**
 - Drawing primitives (lines, rectangles, circles, paths)
@@ -100,6 +119,76 @@ Rich markdown rendering with syntax highlighting, tables, and GitHub-flavored ma
     ctx.fillRect(10, 10, 100, 50);
   }}
 />
+```
+
+### Syntax Plugin
+
+Syntax highlighting library for code display in Kryon applications.
+
+**Repository:** [github.com/kryonlabs/kryon-syntax](https://github.com/kryonlabs/kryon-syntax)
+
+**Features:**
+- Multiple language support: C-like, Python, Bash, JSON, Kryon
+- Themable output with customizable color schemes
+- Terminal and HTML renderers
+- Lexical tokenization for accurate highlighting
+
+**Supported Languages:**
+- **C-like** - C, C++, Java, JavaScript, TypeScript
+- **Python** - Python syntax highlighting
+- **Bash** - Shell script highlighting
+- **JSON** - JSON format highlighting
+- **Kryon** - Kryon DSL (.kry files) highlighting
+
+**Usage:**
+```kry
+@plugin syntax
+
+Syntax {
+    language = "python"
+    code = '''
+def hello():
+    print("Hello, World!")
+    '''
+    theme = "monokai"
+}
+```
+
+### Storage Plugin
+
+localStorage-like persistent storage for Kryon applications.
+
+**Repository:** [github.com/kryonlabs/kryon-storage](https://github.com/kryonlabs/kryon-storage)
+
+**Features:**
+- Simple key-value string storage
+- Auto-save on every change
+- JSON format storage files
+- Cross-platform (Linux, macOS, Windows, WASM)
+- Available for Nim, Lua, JavaScript, and TypeScript
+
+**Usage:**
+```lua
+Storage.init("myapp")
+Storage.setItem("username", "alice")
+local name = Storage.getItem("username", "guest")
+Storage.removeItem("username")
+```
+
+```nim
+storage.init("myapp")
+storage.setItem("username", "alice")
+let name = storage.getItem("username", "guest")
+storage.removeItem("username")
+```
+
+```typescript
+import { Storage } from 'kryon-storage';
+
+Storage.init('myapp');
+Storage.setItem('username', 'alice');
+const name = Storage.getItem('username', 'guest');
+Storage.removeItem('username');
 ```
 
 ## Creating Plugins
@@ -160,5 +249,5 @@ ir_plugin_register_web_renderer(MY_COMPONENT_TYPE, my_web_renderer, my_css_gener
 ## Resources
 
 - [Plugin API Reference](https://github.com/kryonlabs/kryon/blob/master/ir/ir_plugin.h)
-- [Markdown Plugin Source](https://github.com/kryonlabs/kryon-plugin-markdown)
-- [Canvas Plugin Source](https://github.com/kryonlabs/kryon-plugin-canvas)
+- [Flowchart Plugin Source](https://github.com/kryonlabs/kryon-flowchart)
+- [Canvas Plugin Source](https://github.com/kryonlabs/kryon-canvas)

@@ -1,7 +1,5 @@
 # Kryon IR Developer Guide
 
-**Version:** 2.0
-
 ## Table of Contents
 
 1. [Introduction](#introduction)
@@ -26,7 +24,7 @@ Kryon is a cross-platform UI framework with an intermediate representation (IR) 
 - **Efficient serialization**: Compact binary format for fast load times
 - **Reactive programming**: Automatic UI updates when state changes
 
-This guide focuses on the IR compilation pipeline and tooling introduced in v2.0.
+This guide focuses on the IR compilation pipeline and tooling.
 
 ## Architecture Overview
 

@@ -1,7 +1,5 @@
 # Kryon IR Pipeline Guide
 
-**Version:** 2.0
-
 ## Table of Contents
 
 1. [Overview](#overview)
@@ -45,7 +43,7 @@ The Kryon IR (Intermediate Representation) pipeline provides a clean separation 
 |       |                                              |
 |  ir_write_binary_file() -> .kirb                     |
 |       |                                              |
-|  .kirb (Binary v2.0) <- ONLY format backends read    |
+|  .kirb (Binary format) <- ONLY format backends read    |
 +-------------------------------------------------------+
                       |
 +-------------------------------------------------------+
@@ -145,7 +143,7 @@ The IR pipeline is designed as **5 independent modules**, each with clear interf
 **Purpose:** Serialize IR to efficient binary format
 
 **Input:** `IRComponent*` tree
-**Output:** `.kirb` file (Binary v2.0)
+**Output:** `.kirb` file (Binary format)
 **Interface:** `ir_write_binary_file()`
 
 **Implementation:** `ir/ir_serialization.c`
@@ -218,7 +216,7 @@ The IR pipeline is designed as **5 independent modules**, each with clear interf
 
 **Specification:** See `KIR_FORMAT_V2.md` for complete JSON schema
 
-### .kirb Format (Binary v2.0)
+### .kirb Format (Binary)
 
 **Purpose:** Efficient binary IR for backend consumption
 
