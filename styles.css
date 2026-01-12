@@ -139,8 +139,8 @@ nav a {
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
 }
 
 .feature-card {
@@ -232,12 +232,6 @@ nav a {
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  text-decoration: none;
-  transition: transform 0.2s;
-}
-
-.sponsor:hover {
-  transform: scale(1.05);
 }
 
 .sponsor-logo {
@@ -251,6 +245,25 @@ nav a {
   font-weight: 600;
   font-size: 1.1rem;
   color: var(--text);
+}
+
+.sponsor-links {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.sponsor-link {
+  font-size: 0.875rem;
+  color: var(--primary);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.sponsor-link:hover {
+  background: rgba(99, 102, 241, 0.1);
 }
 
 /* Footer */
@@ -318,6 +331,56 @@ footer nav a {
   overflow-y: auto;
 }
 
+/* Sidebar title */
+.docs-sidebar-title {
+  color: #f0f6fc;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #21262d;
+}
+
+/* Category headings */
+.docs-sidebar-category {
+  color: #8b949e;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 24px 0 8px 0;
+  padding: 0;
+  font-weight: 600;
+}
+
+.docs-sidebar-category:first-child {
+  margin-top: 0;
+}
+
+/* Sidebar links (no bullet points, direct styling) */
+.docs-sidebar-link {
+  display: block;
+  padding: 8px 12px;
+  color: #8b949e;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.15s ease;
+  margin: 2px 0;
+}
+
+.docs-sidebar-link:hover {
+  color: #f0f6fc;
+  background: #21262d;
+}
+
+.docs-sidebar-link.active {
+  color: #58a6ff;
+  background: rgba(56, 139, 253, 0.15);
+  font-weight: 500;
+}
+
+/* Old styles for backward compatibility */
 .docs-sidebar h3 {
   color: #f0f6fc;
   font-size: 13px;
@@ -497,6 +560,12 @@ footer nav a {
   color: var(--text-muted);
   font-size: 0.9rem;
   line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 640px) {
