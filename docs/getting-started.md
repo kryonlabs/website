@@ -1,8 +1,10 @@
 # Getting Started with Kryon
 
-Kryon is a universal UI framework that compiles to multiple targets from a single source. Write once in TSX, Lua, Kry DSL, HTML, or Markdown - deploy to desktop (SDL3/Raylib), web (HTML/CSS/JS), terminal (TUI), Android, or embedded systems.
+Kryon is a universal UI framework that compiles to multiple targets from a single source. Write once in **Markdown**, TSX, Lua, Kry DSL, HTML, or C - deploy to desktop (SDL3/Raylib), web (HTML/CSS/JS), terminal (TUI), Android, or embedded systems.
 
 ## Quick Start
+
+### Kry DSL
 
 ```kry
 // hello.kry
@@ -26,6 +28,23 @@ App {
 ```
 
 Run with: `kryon run hello.kry`
+
+### Markdown
+
+```markdown
+<!-- hello.md -->
+# Hello World
+
+Welcome to **Kryon** - a universal UI framework.
+
+## Features
+
+- Cross-platform rendering
+- Multiple frontends
+- Fast compilation
+```
+
+Run with: `kryon run hello.md`
 
 ## Installation
 
@@ -62,19 +81,24 @@ kryon new my-app                         # Creates project with kryon.toml
 # Build applications
 kryon build                              # Build from kryon.toml entry
 kryon build index.tsx                    # Build specific file
+kryon build README.md                    # Build markdown to web
 
 # Run applications
 kryon run                                # Build + start dev server
 kryon run app.kir                        # Run pre-compiled KIR
+kryon run README.md                      # Run markdown directly
+kryon run README.md --renderer=terminal  # Render markdown to terminal
 
 # Compile to KIR only
 kryon compile index.tsx                  # Outputs .kryon_cache/index.kir
+kryon compile README.md                  # Compile markdown to KIR
 kryon compile index.tsx --output=app.kir # Custom output path
 
 # Generate code from KIR
 kryon codegen tsx app.kir app.tsx        # KIR → TypeScript
 kryon codegen lua app.kir app.lua        # KIR → Lua
 kryon codegen nim app.kir app.nim        # KIR → Nim
+kryon codegen markdown app.kir app.md    # KIR → Markdown (round-trip)
 kryon codegen kry app.kir app.kry        # KIR → Kry DSL
 
 # Inspect KIR files
@@ -130,6 +154,7 @@ kryon build --target web app.kry
 
 ## Features
 
+- **Multiple frontends**: Markdown, TSX, Lua, Nim DSL, C, HTML
 - Declarative DSL syntax
 - Multiple rendering backends (SDL3, Raylib, Terminal) and codegens (HTML/Web, TSX, JSX)
 - Event handlers (onClick, onChange, onSubmit, etc.)
@@ -139,6 +164,8 @@ kryon build --target web app.kry
 - Styling (colors, borders, padding, fonts)
 - Text rendering with custom fonts
 - Mouse and keyboard input
+- **Markdown with GFM support** - Write docs and UIs in Markdown with syntax highlighting
+- **Component embedding** - Mix markdown with interactive UI components
 
 ## Visual Testing with kryon-test
 
@@ -169,15 +196,30 @@ See the [Testing documentation](/docs/testing) for complete details.
 
 ## Components
 
-- **Container** - Generic container with styling
-- **Text** - Text display
+- **Container** - Generic container with styling, supports flexbox and grid layouts
+- **Column** - Vertical flex layout with alignment options
+- **Row** - Horizontal flex layout with alignment options
+- **Center** - Centered layout
+- **Text** - Text display with font styling
 - **Button** - Clickable button with hover states
 - **Input** - Text input field with focus and cursor
+- **Textarea** - Multi-line text input
 - **Checkbox** - Toggle checkbox with label
 - **Dropdown** - Selection dropdown with keyboard navigation
-- **Column** - Vertical layout with alignment options
-- **Row** - Horizontal layout with alignment options
-- **Center** - Centered layout
-- **TabGroup/TabBar/Tab/TabContent** - Tab-based navigation
+- **Image** - Image display with sizing options
 - **Link** - Navigation links
-- **Markdown** - Render markdown content
+- **TabGroup/TabBar/Tab/TabContent** - Tab-based navigation
+
+## Web Features
+
+When targeting the web (HTML/CSS/JS), Kryon supports comprehensive HTML and CSS features including:
+
+- **Layout**: Flexbox, CSS Grid
+- **Typography**: Font sizes, weights, families, alignment, spacing
+- **Colors**: Gradients, CSS variables
+- **Effects**: Box shadows, transforms, opacity
+- **Forms**: Buttons, inputs, textareas, selects, labels
+- **Tables**: Full table structure with headers, bodies, and cells
+- **Semantic HTML**: Headers, sections, articles, nav, aside, figure, etc.
+
+See the [Web Features Reference](/docs/web-features) for complete HTML/CSS support details.

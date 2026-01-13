@@ -107,11 +107,14 @@ App {
 
 **Supported:**
 - ✅ All layout components (Container, Column, Row, Center)
+- ✅ CSS Grid layout (grid-template-columns, grid-template-rows, grid-area, etc.)
+- ✅ Flexbox layout (gap, alignment, wrapping)
 - ✅ Text rendering with custom styles
 - ✅ Buttons with hover states
 - ✅ Images with proper sizing
-- ✅ Flexbox layout (gap, alignment, wrapping)
-- ✅ CSS styling (colors, borders, padding, radius)
+- ✅ Comprehensive CSS styling (colors, borders, padding, radius, shadows, transforms, gradients)
+- ✅ CSS custom properties (variables)
+- ✅ Semantic HTML elements (tables, forms, sections, articles, nav, etc.)
 - ✅ Responsive layouts
 - ✅ SVG graphics
 

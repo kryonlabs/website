@@ -38,6 +38,10 @@ dist/
 ### Features
 
 - CSS flexbox layout
+- CSS Grid layout (2D layouts)
+- Comprehensive CSS styling (colors, borders, shadows, transforms, gradients)
+- Semantic HTML elements (tables, forms, sections, articles, nav, etc.)
+- CSS custom properties (variables)
 - JavaScript event handlers
 - Responsive design
 - Static file generation

@@ -7,4 +7,6 @@ targets = ["web"]
 entry = "index.html"
 
 [plugins]
-syntax = { path = "../kryon-plugins/syntax" }
+# Use git sparse checkout to fetch only the syntax plugin subdirectory
+# This avoids cloning the full kryon-plugins repository
+syntax = { git = "https://github.com/kryonlabs/kryon-plugins.git", subdir = "syntax" }

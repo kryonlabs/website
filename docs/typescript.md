@@ -74,7 +74,8 @@ bun run examples/typescript/hello_world.tsx
 - `<row>` - Horizontal flex container
 - `<column>` - Vertical flex container
 - `<center>` - Center content
-- `<container>` - Generic container
+- `<container>` - Generic container (with grid support via `display: "grid"`)
+- `<grid>` - CSS Grid layout container
 
 ### Content Components
 - `<text>` - Text display
@@ -87,15 +88,40 @@ bun run examples/typescript/hello_world.tsx
 
 All components support these common props:
 - `width`, `height` - Size (number for px, string like "50%" or "auto")
+- `minWidth`, `maxWidth`, `minHeight`, `maxHeight` - Constrained sizes
 - `padding`, `margin` - Spacing (number or [top, right, bottom, left])
-- `backgroundColor` - Background color (hex string like "#ff0000")
+- `backgroundColor` - Background color (hex string like "#ff0000", or gradient like "linear-gradient(90deg, red, blue)")
 - `opacity` - Opacity (0.0 to 1.0)
 - `zIndex` - Stack order
+- `borderRadius` - Corner rounding (number or [top-left, top-right, bottom-right, bottom-left])
+- `borderWidth`, `borderColor` - Border styling
+- `boxShadow` - Drop shadow effect
+- `transform` - 2D transforms
+- `cursor` - Mouse cursor style
+- `display` - "flex", "grid", "block", "inline-flex", "inline-grid"
 
 Layout components also support:
 - `gap` - Space between children
 - `justify` - Main axis alignment (start, center, end, space-between, space-around, space-evenly)
 - `align` - Cross axis alignment (start, center, end)
+
+Text components also support:
+- `fontSize` - Font size in px
+- `fontWeight` - "normal", "bold", or 100-900
+- `fontStyle` - "normal", "italic"
+- `fontFamily` - Font family name
+- `textAlign` - "left", "center", "right", "justify"
+- `lineHeight` - Line height multiplier
+- `letterSpacing` - Character spacing
+- `wordSpacing` - Word spacing
+- `textDecoration` - "none", "underline", "line-through", "overline"
+- `textOverflow` - "clip", "ellipsis"
+
+Grid layout also supports:
+- `gridTemplateColumns` - Column track definitions (e.g., "1fr 1fr 1fr" or "repeat(3, 1fr)")
+- `gridTemplateRows` - Row track definitions
+- `gridAutoFlow` - "row" or "column"
+- `alignSelf`, `justifySelf` - Per-item alignment
 
 ## React Hooks
 
@@ -620,6 +646,71 @@ KRYON_RENDERER=web bun run app.tsx
   <button title="Center" />
   <button title="Right" />
 </row>
+```
+
+## Grid Layout
+
+Kryon supports full CSS Grid layout for complex 2D layouts.
+
+### Basic Grid
+
+```tsx
+<container
+  display="grid"
+  gridTemplateColumns="1fr 1fr 1fr"
+  gridTemplateRows="auto"
+  gap={20}
+>
+  <text content="Cell 1" />
+  <text content="Cell 2" />
+  <text content="Cell 3" />
+  <text content="Cell 4" />
+  <text content="Cell 5" />
+  <text content="Cell 6" />
+</container>
+```
+
+### Grid with Named Areas
+
+```tsx
+<container
+  display="grid"
+  gridTemplateColumns="200px 1fr 200px"
+  gridTemplateRows="auto 1fr auto"
+  gap={10}
+>
+  <container style={{ gridArea: "1 / 1 / 2 / 4" }}>
+    <text content="Header" />
+  </container>
+  <container style={{ gridArea: "2 / 1 / 3 / 2" }}>
+    <text content="Sidebar" />
+  </container>
+  <container style={{ gridArea: "2 / 2 / 3 / 3" }}>
+    <text content="Main Content" />
+  </container>
+  <container style={{ gridArea: "2 / 3 / 3 / 4" }}>
+    <text content="Ads" />
+  </container>
+  <container style={{ gridArea: "3 / 1 / 4 / 4" }}>
+    <text content="Footer" />
+  </container>
+</container>
+```
+
+### Grid Item Placement
+
+```tsx
+<container display="grid" gridTemplateColumns="repeat(3, 1fr)" gap={10}>
+  <container style={{ gridColumn: "1 / 3" }}>
+    <text content="Spans 2 columns" />
+  </container>
+  <container style={{ gridRow: "2 / 4" }}>
+    <text content="Spans 2 rows" />
+  </container>
+  <container>
+    <text content="Normal cell" />
+  </container>
+</container>
 ```
 
 ## Event Handlers
