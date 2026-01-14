@@ -30,6 +30,9 @@ jobs:
         run: |
           curl -fsSL \
             https://github.com/kryonlabs/kryon/releases/download/latest/kryon-linux-x86_64-web \
+            -o /tmp/kryon || \
+          curl -fsSL \
+            https://github.com/kryonlabs/kryon/releases/latest/download/kryon-linux-x86_64-web \
             -o /tmp/kryon
           chmod +x /tmp/kryon
           sudo mv /tmp/kryon /usr/local/bin/kryon
@@ -50,7 +53,7 @@ jobs:
 
           # Build the syntax plugin
           cd syntax
-          make
+          make -B  # Force rebuild, don't use cached objects
 
           # Install to Kryon plugin discovery path
           mkdir -p ~/.local/share/kryon/plugins/syntax
