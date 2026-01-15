@@ -23,9 +23,9 @@ Kryon uses two runtime file formats:
 - **.kir** - JSON intermediate representation (human-readable, for development and debugging)
 - **.krb** - Standalone binary package (like .love files), portable across all renderers
 
-**Native Targets** (Nim, C, Rust) compile directly to native code that generates IR at runtime.
+**Native Targets** (C, Nim, Rust) compile directly to native code that generates IR at runtime.
 
-**VM Targets** (Lua, JavaScript/TypeScript, Python, .kry) compile to `.krb` packages that run in any Kryon renderer.
+**VM Targets** (JavaScript/TypeScript, Lua, Python, .kry) compile to `.krb` packages that run in any Kryon renderer.
 
 ## Pipeline Diagram
 
@@ -281,19 +281,19 @@ All backends must implement a minimal set of primitive commands:
 
 | Binding    | SDL3 | Raylib | Terminal | Framebuffer |
 |------------|:----:|:------:|:--------:|:-----------:|
-| Nim        | [x]  |   [x]  |   [x]    |     [x]     |
 | TypeScript | [x]  |   [x]  |   [x]    |     [~]     |
 | Lua        | [x]  |   [x]  |   [x]    |     [x]     |
 | C          | [x]  |   [x]  |   [x]    |     [x]     |
+| Nim        | [x]  |   [x]  |   [x]    |     [x]     |
 
 ### Codegens (Transpilers)
 
 | Binding    | HTML/Web | TSX | JSX |
 |------------|:--------:|:---:|:---:|
-| Nim        |   [x]    | [-] | [-] |
 | TypeScript |   [x]    | [-] | [-] |
 | Lua        |   [x]    |  -  |  -  |
 | C          |   [x]    | [-] | [-] |
+| Nim        |   [x]    | [-] | [-] |
 
 **Legend:** [x] = Supported, [~] = Partial, - = Planned, [-] = Not applicable
 
@@ -318,10 +318,10 @@ All backends must implement a minimal set of primitive commands:
 
 | Frontend   | Syntax                | Runtime         | Best For                      |
 |------------|----------------------|-----------------|-------------------------------|
-| Nim        | DSL macros           | Compiled native | Performance, Desktop, Embedded|
 | TypeScript | JSX syntax           | Bun + FFI       | Web devs, Rapid prototyping   |
 | Lua        | Table-based          | Lua VM          | Scripting, Hot-reload, Modding, Full platform support |
 | C          | Direct API calls     | Compiled native | Max control, Library integration |
+| Nim        | DSL macros           | Compiled native | Performance, Desktop, Embedded|
 
 ## Quick Reference
 
@@ -329,16 +329,17 @@ All backends must implement a minimal set of primitive commands:
 # List all examples
 ./run_example.sh
 
-# Language binding options: nim, ts (typescript), lua, c
+# Language binding options: ts (typescript), lua, c, nim
 # Rendering backend options: sdl3, raylib, terminal, framebuffer
 # Codegen options: web (HTML/CSS/JS transpiler)
 
 # Examples:
-./run_example.sh hello_world              # nim + sdl3 (default)
-./run_example.sh hello_world nim sdl3     # nim + sdl3 (explicit)
-./run_example.sh hello_world nim raylib   # nim + raylib rendering
-./run_example.sh hello_world nim terminal # nim + terminal rendering
-./run_example.sh hello_world ts           # typescript + sdl3
-./run_example.sh hello_world ts web       # typescript + HTML codegen (transpiles to browser)
+./run_example.sh hello_world              # ts + sdl3 (default)
+./run_example.sh hello_world ts sdl3      # typescript + sdl3 (explicit)
+./run_example.sh hello_world ts raylib    # typescript + raylib rendering
 ./run_example.sh hello_world ts terminal  # typescript + terminal rendering
+./run_example.sh hello_world ts web       # typescript + HTML codegen (transpiles to browser)
+./run_example.sh hello_world nim          # nim + sdl3
+./run_example.sh hello_world lua          # lua + sdl3
+./run_example.sh hello_world c            # c + sdl3
 ```

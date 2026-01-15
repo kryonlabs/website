@@ -152,9 +152,32 @@ Codegens generate source code for browsers or other frameworks to render:
 kryon build --target web app.kry
 ```
 
+## Frontend Support
+
+| Frontend | Syntax | Runtime | Best For | Desktop | Terminal | Web |
+|----------|--------|---------|----------|---------|----------|-----|
+| Markdown | MD GFM | Compiled | Docs, simple UIs | ✅ | ✅ | ✅ |
+| TSX/JSX | JSX | Bun + FFI | Web devs, rapid prototyping | ✅ | ✅ | ✅ |
+| Lua | Tables | Lua VM | Scripting, hot-reload, modding | ✅ | ✅ | ✅ |
+| C | Direct API | Compiled native | Max control, library integration | ✅ | ✅ | ✅ |
+| Kry DSL | `.kry` | Compiled | Declarative UI | ✅ | ✅ | ✅ |
+
+## Component Support
+
+| Category | Components | Web | Desktop | Terminal |
+|----------|------------|-----|---------|----------|
+| **Layout** | Container, Column, Row, Center, Grid | ✅ | ✅ | ✅ |
+| **Text** | Text, Heading, Paragraph, Code, Strong, Em | ✅ | ✅ | ⚠️ |
+| **Input** | Button, Input, Textarea, Checkbox, Dropdown | ✅ | ✅ | ✅ |
+| **Display** | Image, Link, Divider, Spacer | ✅ | ✅ | ⚠️ |
+| **Navigation** | TabGroup, TabBar, Sidebar | ✅ | ✅ | ❌ |
+| **Advanced** | Canvas, Markdown, Table | ✅ | ✅ | ❌ |
+
+**Legend:** ✅ Fully Supported | ⚠️ Partial | ❌ Not Supported
+
 ## Features
 
-- **Multiple frontends**: Markdown, TSX, Lua, Nim DSL, C, HTML
+- **Multiple frontends**: Markdown, TSX, Lua, C, HTML
 - Declarative DSL syntax
 - Multiple rendering backends (SDL3, Raylib, Terminal) and codegens (HTML/Web, TSX, JSX)
 - Event handlers (onClick, onChange, onSubmit, etc.)

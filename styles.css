@@ -526,6 +526,39 @@ footer nav a {
   margin-top: 0;
 }
 
+/* Tables */
+.docs-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 20px 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.docs-content th,
+.docs-content td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.docs-content th {
+  background: rgba(39, 39, 42, 0.5);
+  font-weight: 600;
+  color: var(--text);
+  border-bottom: 2px solid var(--border);
+}
+
+.docs-content tr:last-child td {
+  border-bottom: none;
+}
+
+.docs-content tr:hover {
+  background: rgba(99, 102, 241, 0.05);
+}
+
 .docs-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

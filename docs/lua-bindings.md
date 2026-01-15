@@ -472,7 +472,3 @@ The Lua frontend is designed to be a **thin FFI layer** over the C IR core. When
 2. Add FFI binding in `kryon/ffi.lua`
 3. Add DSL helper in `kryon/dsl.lua`
 4. Keep abstraction at zero!
-
-## License
-
-Same as Kryon core project.

@@ -10,3 +10,5 @@ entry = "index.html"
 # Use git sparse checkout to fetch only the syntax plugin subdirectory
 # This avoids cloning the full kryon-plugins repository
 syntax = { git = "https://github.com/kryonlabs/kryon-plugins.git", subdir = "syntax" }
+# Flowchart plugin for Mermaid diagram support
+flowchart = { git = "https://github.com/kryonlabs/kryon-plugins.git", subdir = "flowchart" }

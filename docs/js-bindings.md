@@ -237,6 +237,3 @@ For complete API documentation, see the [Kryon Documentation](https://docs.kryon
 
 Contributions are welcome! Please see the main Kryon repository for guidelines.
 
-## License
-
-MIT License - see LICENSE file for details.

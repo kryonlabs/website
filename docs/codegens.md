@@ -521,4 +521,4 @@ KRYON_TSX_FUNCTIONAL=1      # Use functional components (planned)
 
 - See [Architecture](./architecture.md) for system overview
 - See [IR Pipeline](./ir-pipeline.md) for compilation details
-- See [Contributing](./contributing.md) to add new codegens
+- See [Developer Guide](./developer-guide.md) to contribute new codegens
