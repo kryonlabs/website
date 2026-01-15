@@ -42,6 +42,7 @@ jobs:
 
       - name: Download Kryon Plugin SDK
         run: |
+          mkdir -p ~/.local
           curl -fsSL \
             https://github.com/kryonlabs/kryon/releases/download/latest/kryon-plugin-sdk.tar.gz \
             -o /tmp/kryon-plugin-sdk.tar.gz || \
