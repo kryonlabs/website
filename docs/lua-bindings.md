@@ -250,7 +250,7 @@ kryon.destroyApp(app)
 kryon.debugPrintTree(app.root)
 
 -- Print IR tree to file
-kryon.debugPrintTreeToFile(app.root, "/tmp/tree.txt")
+kryon.debugPrintTreeToFile(app.root, "debug_tree.txt")
 ```
 
 ## Examples

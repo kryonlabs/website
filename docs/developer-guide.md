@@ -101,7 +101,7 @@ This guide focuses on the IR compilation pipeline and tooling.
 
 ```bash
 # Clone repository
-git clone https://github.com/yourorg/kryon.git
+git clone https://github.com/kryonlabs/kryon.git
 cd kryon
 
 # Build IR library
@@ -757,6 +757,6 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines on:
 
 ## Support
 
-- **Issues**: https://github.com/yourorg/kryon/issues
-- **Discussions**: https://github.com/yourorg/kryon/discussions
+- **Issues**: https://github.com/kryonlabs/kryon/issues
+- **Discussions**: https://github.com/kryonlabs/kryon/discussions
 - **Discord**: https://discord.gg/kryon

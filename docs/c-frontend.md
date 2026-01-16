@@ -407,5 +407,5 @@ After `make install`, libraries and headers are in:
 ## Support
 
 For issues or questions:
-- GitHub Issues: https://github.com/anthropics/kryon/issues
+- GitHub Issues: https://github.com/kryonlabs/kryon/issues
 - Check `examples/c/` for auto-generated examples
