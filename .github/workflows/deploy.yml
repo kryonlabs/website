@@ -69,7 +69,7 @@ jobs:
 
           # Install to Kryon plugin discovery path
           mkdir -p ~/.local/share/kryon/plugins/syntax
-          cp libkryon_syntax.so ~/.local/share/kryon/plugins/syntax/
+          cp build/libkryon_syntax.so ~/.local/share/kryon/plugins/syntax/
           cp plugin.toml ~/.local/share/kryon/plugins/syntax/ 2>/dev/null || true
 
       - name: Build website
