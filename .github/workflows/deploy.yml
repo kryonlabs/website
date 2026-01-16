@@ -73,7 +73,7 @@ jobs:
           cp plugin.toml ~/.local/share/kryon/plugins/syntax/ 2>/dev/null || true
 
       - name: Build website
-        run: kryon build --targets=web
+        run: kryon build
 
       - name: Copy static assets to build directory
         run: |
