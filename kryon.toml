@@ -4,7 +4,6 @@ version = "1.0.0"
 
 [build]
 targets = ["web"]
-entry = "index.html"
 
 [plugins]
 # Use git sparse checkout to fetch only the syntax plugin subdirectory
