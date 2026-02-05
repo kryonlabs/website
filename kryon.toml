@@ -3,6 +3,7 @@ name = "kryon-website"
 version = "1.0.0"
 
 [build]
+entry = "index.html"
 targets = ["web"]
 
 [plugins]

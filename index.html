@@ -1,128 +1,198 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kryon - Build Once. Deploy Natively. Everywhere.</title>
-  <link rel="stylesheet" href="styles.css">
+    <title>KRYON LABS - Declarative 9P Interfaces</title>
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: #C0C0C0;
+            color: #000000;
+            margin: 0;
+            padding: 10px;
+        }
+        a {
+            color: #0000EE;
+            text-decoration: underline;
+        }
+        a:visited {
+            color: #551A8B;
+        }
+        .code-block {
+            background: #E0E0E0;
+            border: 1px solid #808080;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            overflow-x: auto;
+        }
+        /* Simple Syntax Highlighting for Kryon */
+        .kw { color: #000080; font-weight: bold; }      /* Keywords: fn, return, etc */
+        .type { color: #800000; font-weight: bold; }    /* Types: Window, Button, etc */
+        .prop { color: #008000; }                       /* Properties: title, width, etc */
+        .str { color: #808000; }                        /* Strings */
+        .num { color: #800080; }                        /* Numbers */
+        .comment { color: #808080; font-style: italic; } /* Comments */
+        .brace { color: #000000; font-weight: bold; }   /* Braces and brackets */
+    </style>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <div class="logo">Kryon<span>Labs</span></div>
-      <nav>
-        <a href="/docs">Docs</a>
-        <a href="https://github.com/kryonlabs" target="_blank" rel="noopener">GitHub</a>
-      </nav>
-    </div>
-  </header>
 
-  <section class="hero">
-    <div class="container">
-      <h1>Build Once. Deploy Natively. Everywhere.</h1>
-      <p>Kryon is a universal UI framework with an intermediate representation (IR) layer. Write once in TSX, Markdown, .kry, or C - compile to native desktop (SDL3/Raylib), terminal, or web targets.</p>
-      <div class="buttons">
-        <a href="/docs" class="btn btn-primary">Get Started</a>
-        <a href="https://github.com/kryonlabs" class="btn btn-outline" target="_blank" rel="noopener">View on GitHub</a>
-      </div>
-    </div>
-  </section>
+<!-- Main Container -->
+<table width="800" align="center" border="1" cellpadding="20" bgcolor="#C0C0C0" cellspacing="0">
+    <tr><td>
 
-  <section class="features">
-    <div class="container">
-      <h2 class="section-title">Why Kryon?</h2>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">🌍</div>
-          <h3>Multi-Platform</h3>
-          <p>Desktop (SDL3/Raylib), Terminal TUI, Embedded, or Web.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🧩</div>
-          <h3>Multi-Language</h3>
-          <p>TypeScript/JSX, Nim DSL, Lua, .kry, Markdown, or C.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">⚡</div>
-          <h3>Universal IR</h3>
-          <p>KIR enables perfect roundtrip. Debug with JSON, deploy binary.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🎨</div>
-          <h3>Rendering Backends</h3>
-          <p>SDL3, Raylib, Terminal, or HTML. Choose your target.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🔥</div>
-          <h3>Hot Reload</h3>
-          <p>Instant preview with <code>kryon dev</code>. Scaffolding included.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">⚛️</div>
-          <h3>Automatic Reactivity</h3>
-          <p>State changes trigger updates automatically. Zero boilerplate.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🔌</div>
-          <h3>Plugin System</h3>
-          <p>Custom components, charts, extensions. Works everywhere.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🛠️</div>
-          <h3>Dev Tools</h3>
-          <p>IR inspection, diff tools, config validation built-in.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+        <!-- Header -->
+        <center>
+            <h1>KRYON LABS</h1>
+        </center>
+        <p align="center">
+            [ <a href="#about">About</a> ]
+            [ <a href="#features">Features</a> ]
+            [ <a href="#example">Example</a> ]
+            [ <a href="#download">Download</a> ]
+            [ <a href="#community">Community</a> ]
+        </p>
+        <hr>
 
-  <section class="workflow">
-    <div class="container">
-      <h2 class="section-title">The Kryon Workflow</h2>
-      <div class="workflow-steps">
-        <div class="step">
-          <div class="step-icon">📝</div>
-          <h3>1. Write Source</h3>
-          <p>Define your UI in .kry, Nim DSL, or TSX.</p>
-        </div>
-        <div class="arrow">→</div>
-        <div class="step">
-          <div class="step-icon">⚙️</div>
-          <h3>2. Compile to IR</h3>
-          <p>CLI compiles to .kir (JSON) or .kirb (binary) format.</p>
-        </div>
-        <div class="arrow">→</div>
-        <div class="step">
-          <div class="step-icon">📱</div>
-          <h3>3. Render Anywhere</h3>
-          <p>Target desktop, terminal, or web natively.</p>
-        </div>
-      </div>
-    </div>
-  </section>
+        <!-- About Section -->
+        <a name="about"></a>
+        <h2>What is Kryon?</h2>
+        <hr>
+        <p>
+            <b>Kryon</b> is a high-level transpiler that brings 90s simplicity to the modern era.
+            By combining the logic of Limbo with a declarative, Tk-compatible syntax,
+            Kryon allows you to build sophisticated interfaces that talk directly to
+            distributed hardware via the <b>9P protocol</b>.
+        </p>
+        <p>
+            Stop wrestling with bloated frameworks. Kryon uses a clean, block-based
+            architecture for UI and system modules.
+        </p>
 
-  <section class="sponsors">
-    <div class="container">
-      <h2>Sponsored By</h2>
-      <div class="sponsor">
-        <img src="assets/sponsors/5bitcube.jpg" alt="5bitcube" class="sponsor-logo">
-        <div class="sponsor-name">5bitcube</div>
-        <div class="sponsor-links">
-          <a href="https://5bitcube.com/" target="_blank" rel="noopener" class="sponsor-link">Website</a>
-          <a href="https://x.com/5bitcube" target="_blank" rel="noopener" class="sponsor-link">Twitter</a>
-        </div>
-      </div>
-    </div>
-  </section>
+        <br>
 
-  <footer>
-    <div class="container">
-      <p>© 2025 Kryon Labs. All rights reserved.</p>
-      <nav>
-        <a href="/docs">Documentation</a>
-        <a href="https://github.com/kryonlabs/kryon/issues" target="_blank" rel="noopener">Issues</a>
-      </nav>
-    </div>
-  </footer>
+        <!-- Features Section -->
+        <a name="features"></a>
+        <h2>Features</h2>
+        <hr>
+        <ul>
+            <li><b>Pure Efficiency:</b> Transpiles directly to optimized system code.</li>
+            <li><b>Native 9P:</b> File-sharing and network resources are handled as local objects.</li>
+            <li><b>Tk Styling:</b> Classic, predictable, and incredibly fast UI rendering.</li>
+            <li><b>Unified Modules:</b> Access every system resource through a single, simple interface.</li>
+            <li><b>Declarative Syntax:</b> Write less, do more with block-based UI definitions.</li>
+        </ul>
+
+        <br>
+
+        <!-- Code Example Section -->
+        <a name="example"></a>
+        <h2>Code Example</h2>
+        <hr>
+        <p>Simple button with callbacks and Tk-compatible styling:</p>
+
+        <pre class="code-block"><span class="comment">// Kryon Button Example</span>
+<span class="comment">// Demonstrates button with callbacks and Tk-compatible styling</span>
+
+<span class="kw">fn</span> <span class="type">handleClick</span>() {
+    <span class="type">sys</span><span class="brace">-&gt;</span><span class="prop">print</span>(<span class="str">"Button clicked!\n"</span>);
+}
+
+<span class="type">Window</span> {
+    <span class="prop">title</span> = <span class="str">"Button Demo"</span>
+    <span class="prop">width</span> = <span class="num">600</span>; <span class="prop">height</span> = <span class="num">400</span>
+    <span class="prop">bg</span> = <span class="str">"#191919"</span>
+
+    <span class="type">Center</span> {
+        <span class="type">Button</span> {
+            <span class="prop">text</span> = <span class="str">"Click Me!"</span>
+            <span class="prop">fg</span> = <span class="str">"pink"</span>; <span class="prop">bg</span> = <span class="str">"#404080"</span>
+            <span class="prop">font</span> = <span class="str">"Helvetica 14 bold"</span>
+            <span class="prop">padx</span> = <span class="num">20</span>; <span class="prop">pady</span> = <span class="num">10</span>
+            <span class="prop">relief</span> = <span class="str">"raised"</span>; <span class="prop">borderwidth</span> = <span class="num">2</span>
+            <span class="prop">onClick</span> = <span class="type">handleClick</span>
+        }
+    }
+}</pre>
+
+        <br>
+
+        <!-- Download Section -->
+        <a name="download"></a>
+        <h2>Download</h2>
+        <hr>
+        <p>Get started with Kryon today:</p>
+        <ul>
+            <li>[ <a href="#">Download Latest Release</a> ]</li>
+            <li>[ <a href="#">Documentation</a> ]</li>
+            <li>[ <a href="#">GitHub Repository</a> ]</li>
+        </ul>
+
+        <br>
+
+        <!-- Community Section -->
+        <a name="community"></a>
+        <h2>Community</h2>
+        <hr>
+        <p>Built for the <a href="https://taijios.net/">TaijiOS</a> Distributed Specification.</p>
+        <ul>
+            <li>[ <a href="#">Join the Discord</a> ]</li>
+            <li>[ <a href="#">Read the Blog</a> ]</li>
+            <li>[ <a href="#">Report Issues</a> ]</li>
+        </ul>
+
+        <br><br>
+
+        <!-- Sponsors Section -->
+        <h2>SPONSORS</h2>
+        <hr>
+        <table border="1" cellpadding="15" bgcolor="#E0E0E0" align="center">
+            <tr>
+                <td align="center">
+                    <a href="https://5bitcube.com/">
+                        <img src="assets/sponsors/5bitcube.jpg" style="max-width: 88px; height: auto;" border="1" alt="5bitcube">
+                    </a>
+                    <br><br>
+                    <small>
+                        &gt; <a href="https://5bitcube.com/">WEB</a> &lt; |
+                        &gt; <a href="https://x.com/5bitcube">TWITTER</a> &lt;
+                    </small>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <center><small>[ <a href="mailto:contact@kryonlabs.com">BECOME A SPONSOR</a> ]</small></center>
+
+        <br><br>
+
+        <!-- Footer -->
+        <hr>
+        <center>
+            <small>
+                KRYONLABS.COM // EST. 2026 // EVERYTHING IS A FILE
+            </small>
+        </center>
+
+    </td></tr>
+</table>
+
 </body>
 </html>
