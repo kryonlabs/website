@@ -1,4 +1,4 @@
-name: Build and Deploy to Netlify
+name: Deploy to Netlify
 
 on:
   push:
@@ -8,83 +8,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Setup TSX parser dependencies
-        run: |
-          mkdir -p ~/.cache/kryon/scripts
-          cd ~/.cache/kryon/scripts
-          echo '{"dependencies":{"@babel/core":"^7.28.5","@babel/parser":"^7.28.5","@babel/types":"^7.28.5"}}' > package.json
-          bun install
-
-      - name: Download Kryon CLI (web variant)
-        run: |
-          curl -fsSL \
-            https://github.com/kryonlabs/kryon/releases/download/latest/kryon-linux-x86_64-web \
-            -o /tmp/kryon || \
-          curl -fsSL \
-            https://github.com/kryonlabs/kryon/releases/latest/download/kryon-linux-x86_64-web \
-            -o /tmp/kryon
-          chmod +x /tmp/kryon
-          sudo mv /tmp/kryon /usr/local/bin/kryon
-
-      - name: Verify Kryon installation
-        run: kryon --version
-
-      - name: Download Kryon Plugin SDK
-        run: |
-          mkdir -p ~/.local
-          curl -fsSL \
-            https://github.com/kryonlabs/kryon/releases/download/latest/kryon-plugin-sdk.tar.gz \
-            -o /tmp/kryon-plugin-sdk.tar.gz || \
-          curl -fsSL \
-            https://github.com/kryonlabs/kryon/releases/latest/download/kryon-plugin-sdk-0.2.0-x86_64.tar.gz \
-            -o /tmp/kryon-plugin-sdk.tar.gz
-          tar -xzf /tmp/kryon-plugin-sdk.tar.gz -C ~/.local/
-          echo "✓ Installed Kryon Plugin SDK to ~/.local/include/"
-
-      - name: Build syntax plugin
-        run: |
-          # Clone kryon-plugins with sparse checkout (only syntax plugin)
-          mkdir -p /tmp/kryon-plugins
-          cd /tmp/kryon-plugins
-          git init
-          git remote add origin https://github.com/kryonlabs/kryon-plugins.git
-          git config core.sparseCheckout true
-          echo "syntax/" > .git/info/sparse-checkout
-          git pull --depth 1 origin master
-
-          # Build the syntax plugin (now uses only capability.h from SDK)
-          cd syntax
-          make -B  # Force rebuild, don't use cached objects
-
-          # Install to Kryon plugin discovery path
-          mkdir -p ~/.local/share/kryon/plugins/syntax
-          cp build/libkryon_syntax.so ~/.local/share/kryon/plugins/syntax/
-          cp plugin.toml ~/.local/share/kryon/plugins/syntax/ 2>/dev/null || true
-
-      - name: Build website
-        run: kryon build
-
-      - name: Copy static assets to build directory
-        run: |
-          cp -v favicon.ico build/ 2>/dev/null || true
-          cp -v apple-touch-icon.png build/ 2>/dev/null || true
-          cp -v icon-*.png build/ 2>/dev/null || true
-
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3
         with:
-          publish-dir: './build'
+          publish-dir: './'
           production-branch: master
           production-deploy: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
