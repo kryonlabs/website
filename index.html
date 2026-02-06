@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>KRYON LABS - Declarative 9P Interfaces</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
@@ -51,19 +52,75 @@
         .num { color: #800080; }                        /* Numbers */
         .comment { color: #808080; font-style: italic; } /* Comments */
         .brace { color: #000000; font-weight: bold; }   /* Braces and brackets */
+
+        /* Navigation links with better spacing */
+        .nav-links a {
+            margin: 4px 2px;
+            display: inline-block;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            /* Make code blocks scrollable */
+            .code-block {
+                font-size: 11px;
+                padding: 10px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                word-wrap: break-word;
+                white-space: pre-wrap;
+            }
+
+            /* Navigation links with better spacing */
+            .nav-links a {
+                display: inline-block;
+                margin: 4px 2px;
+                font-size: 14px;
+            }
+
+            /* Smaller headings on mobile */
+            h1 {
+                font-size: 24px;
+            }
+            h2 {
+                font-size: 20px;
+            }
+
+            /* Sponsor table responsive */
+            table[bgcolor="#E0E0E0"] {
+                width: 95% !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 20px;
+            }
+            h2 {
+                font-size: 18px;
+            }
+            .code-block {
+                font-size: 10px;
+                padding: 8px;
+            }
+        }
     </style>
 </head>
 <body>
 
 <!-- Main Container -->
-<table width="800" align="center" border="1" cellpadding="20" bgcolor="#C0C0C0" cellspacing="0">
+<table width="95%" style="max-width: 800px; margin: 0 auto;" align="center" border="1" cellpadding="20" bgcolor="#C0C0C0" cellspacing="0">
     <tr><td>
 
         <!-- Header -->
         <center>
             <h1>KRYON LABS</h1>
         </center>
-        <p align="center">
+        <p align="center" class="nav-links">
             [ <a href="#about">About</a> ]
             [ <a href="#features">Features</a> ]
             [ <a href="#example">Example</a> ]
@@ -168,7 +225,7 @@
             <tr>
                 <td align="center">
                     <a href="https://5bitcube.com/">
-                        <img src="assets/sponsors/5bitcube.jpg" style="max-width: 88px; height: auto;" border="1" alt="5bitcube">
+                        <img src="assets/sponsors/5bitcube.jpg" style="width: 100%; max-width: 88px; height: auto;" border="1" alt="5bitcube">
                     </a>
                     <br><br>
                     <small>
