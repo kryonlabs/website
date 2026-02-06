@@ -27,6 +27,9 @@
             color: #000000;
             margin: 0;
             padding: 10px;
+            line-height: 1.2;
+            overflow-x: hidden;
+            width: 100%;
         }
         a {
             color: #0000EE;
@@ -53,17 +56,38 @@
         .comment { color: #808080; font-style: italic; } /* Comments */
         .brace { color: #000000; font-weight: bold; }   /* Braces and brackets */
 
-        /* Navigation links with better spacing */
-        .nav-links a {
-            margin: 4px 2px;
-            display: inline-block;
+        /* Word wrap for text elements */
+        h1, h2, h3, p, li, ul, ol { word-wrap: break-word; overflow-wrap: break-word; }
+
+        /* Navigation with better spacing - copied from TaijiOS */
+        .nav {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px 12px;
+        }
+        .nav .bracket { display: inline; }
+        .nav a { text-decoration: none; display: inline-block; }
+        .nav a:hover, .nav a:focus {
+            outline: 2px solid #000080;
+            outline-offset: 2px;
         }
 
         /* Mobile Responsive Styles */
-        @media (max-width: 768px) {
-            body {
-                padding: 5px;
-            }
+
+        /* Tablet: 768px - 1024px */
+        @media (max-width: 1024px) {
+            table[width="95%"] { max-width: 95%; }
+            h1 { font-size: 2em; }
+        }
+
+        /* Mobile: < 768px */
+        @media (max-width: 767px) {
+            body { padding: 5px; }
 
             /* Make code blocks scrollable */
             .code-block {
@@ -71,43 +95,87 @@
                 padding: 10px;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
-                word-wrap: break-word;
-                white-space: pre-wrap;
             }
 
-            /* Navigation links with better spacing */
-            .nav-links a {
+            /* Navigation copied from TaijiOS - better mobile handling */
+            .nav {
+                font-size: 0.75em;
+                gap: 8px 12px;
+                line-height: 1.8;
+            }
+            .nav .bracket { display: none; }
+            .nav a {
+                padding: 8px;
+                text-decoration: none;
                 display: inline-block;
-                margin: 4px 2px;
-                font-size: 14px;
+            }
+            .nav a:hover, .nav a:focus {
+                outline: 2px solid #000080;
+                outline-offset: 2px;
             }
 
             /* Smaller headings on mobile */
-            h1 {
-                font-size: 24px;
+            h1 { font-size: 1.5em; }
+            h2 { font-size: 1.2em; }
+
+            /* Fix main table layout on mobile */
+            table[width="95%"] {
+                width: 100% !important;
+                max-width: 100% !important;
+                table-layout: fixed;
+                overflow-x: hidden;
             }
-            h2 {
-                font-size: 20px;
+            table[width="95%"] td {
+                display: block;
+                width: 100%;
             }
 
             /* Sponsor table responsive */
             table[bgcolor="#E0E0E0"] {
                 width: 95% !important;
+                max-width: 100% !important;
+                table-layout: fixed;
             }
         }
 
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 20px;
-            }
-            h2 {
-                font-size: 18px;
-            }
-            .code-block {
-                font-size: 10px;
-                padding: 8px;
-            }
+        /* Small Mobile: < 480px */
+        @media (max-width: 479px) {
+            h1 { font-size: 1.3em; }
+            h2 { font-size: 1em; }
+            .code-block { font-size: 10px; padding: 8px; }
         }
+
+        /* === MOBILE OPTIMIZATIONS === */
+
+        /* Fix box-sizing globally */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Prevent horizontal scroll on html */
+        html {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* Images and media */
+        img, embed, object, video { max-width: 100%; height: auto; }
+
+        /* Smooth scrolling */
+        html { scroll-behavior: smooth; }
+
+        /* Prevent text size adjustment on mobile rotation */
+        html, body {
+            -webkit-text-size-adjust: 100%;
+            -moz-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        /* Focus states for accessibility */
+        a:focus { outline: 2px solid #000080; outline-offset: 2px; }
+
+        /* Better tap highlight */
+        * { -webkit-tap-highlight-color: rgba(0, 128, 0, 0.2); }
     </style>
 </head>
 <body>
@@ -120,13 +188,11 @@
         <center>
             <h1>KRYON LABS</h1>
         </center>
-        <p align="center" class="nav-links">
-            [ <a href="#about">About</a> ]
-            [ <a href="#features">Features</a> ]
-            [ <a href="#example">Example</a> ]
-            [ <a href="#download">Download</a> ]
-            [ <a href="#community">Community</a> ]
-        </p>
+        <div class="nav">
+            <span class="bracket">[</span> <a href="#about">ABOUT</a> <span class="bracket">]</span>
+            <span class="bracket">[</span> <a href="#features">FEATURES</a> <span class="bracket">]</span>
+            <span class="bracket">[</span> <a href="#example">EXAMPLE</a> <span class="bracket">]</span>
+        </div>
         <hr>
 
         <!-- About Section -->
@@ -189,33 +255,6 @@
         }
     }
 }</pre>
-
-        <br>
-
-        <!-- Download Section -->
-        <a name="download"></a>
-        <h2>Download</h2>
-        <hr>
-        <p>Get started with Kryon today:</p>
-        <ul>
-            <li>[ <a href="#">Download Latest Release</a> ]</li>
-            <li>[ <a href="#">Documentation</a> ]</li>
-            <li>[ <a href="#">GitHub Repository</a> ]</li>
-        </ul>
-
-        <br>
-
-        <!-- Community Section -->
-        <a name="community"></a>
-        <h2>Community</h2>
-        <hr>
-        <p>Built for the <a href="https://taijios.net/">TaijiOS</a> Distributed Specification.</p>
-        <ul>
-            <li>[ <a href="#">Join the Discord</a> ]</li>
-            <li>[ <a href="#">Read the Blog</a> ]</li>
-            <li>[ <a href="#">Report Issues</a> ]</li>
-        </ul>
-
         <br><br>
 
         <!-- Sponsors Section -->
